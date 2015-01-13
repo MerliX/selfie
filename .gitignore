@@ -1,3 +1,9 @@
+# Local project config
+src/local_settings.py
+
+# Sublime SFTP
+sftp-config.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

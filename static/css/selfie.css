@@ -1,0 +1,17 @@
+.no-margin {
+    margin: 0;
+}
+
+label input[type=file] {
+    position: fixed;
+    top: -1000px;
+}
+
+.card-content li {
+    list-style-type: square;
+    margin-left: 2em;
+}
+
+.collapsible-body .card {
+    margin: 10px;
+}
