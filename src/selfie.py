@@ -72,7 +72,11 @@ def do_approve_task():
             task.save()
             User.update(score=User.score + task.reward).where(User.id == task.assignee).execute()
             if task.partner:
-                User.update(score=User.score + task.reward / 2).where(User.id == task.partner).execute()
+                (User
+                    .update(score=User.score + task.reward / 2)
+                    .where(User.id == task.partner)
+                    .execute()
+                )
         elif request.forms.get('decision') == 'reject':
             if task.is_photo_required:
                 task.delete_photo()
@@ -135,7 +139,9 @@ def moderator_requirements():
         'created_requirement': request.query.created_requirement,
         'created_difficulty': request.query.created_difficulty,
         'created_is_basic': request.query.created_is_basic,
-        'requirements': Requirement.select().order_by(Requirement.is_basic.desc(), Requirement.difficulty)
+        'requirements': Requirement
+            .select()
+            .order_by(Requirement.is_basic.desc(), Requirement.difficulty)
     }
 
 

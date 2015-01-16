@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from peewee import *
+from peewee import SqliteDatabase, Model, TextField, IntegerField, BooleanField, CharField, fn, \
+                   ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER
 from settings import PHOTO_PATH, DB_PATH, SELFIE_REWARD
 
 db = SqliteDatabase(DB_PATH)
@@ -12,7 +13,7 @@ class Requirement(Model):
     difficulty = IntegerField()
     is_basic = BooleanField(default=True)
 
-    class Meta:
+    class Meta(object):
         database = db
 
 
@@ -45,7 +46,7 @@ class User(Model):
             .scalar()
         )
 
-    class Meta:
+    class Meta(object):
         database = db
 
 
@@ -75,7 +76,10 @@ class Task(Model):
                 .select(User.id)
                 .join(Task, JOIN_LEFT_OUTER, Task.partner)
                 .where(
-                    ~(User.id << self.assignee.tasks.select(Task.partner).where(~(Task.partner >> None)))
+                    ~(User.id << self.assignee
+                                     .tasks
+                                     .select(Task.partner)
+                                     .where(~(Task.partner >> None)))
                     & (User.id != self.assignee.id)
                 )
                 .group_by(User.id)
@@ -115,5 +119,5 @@ class Task(Model):
     def delete_photo(self):
         os.remove(self.photo_path)
 
-    class Meta:
+    class Meta(object):
         database = db
