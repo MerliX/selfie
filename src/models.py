@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 from peewee import *
 from settings import PHOTO_PATH, DB_PATH
@@ -67,15 +69,6 @@ class Task(Model):
     description = TextField()
     reward = IntegerField()
     difficulty = IntegerField()
-
-    @staticmethod
-    def get_latest_approved_selfies(limit):
-        return (Task
-            .select()
-            .where((Task.is_approved == True) & (Task.is_selfie_game == True))
-            .order_by(Task.approved_time.desc())
-            .limit(limit)
-        )
 
     @property
     def photo_path(self):

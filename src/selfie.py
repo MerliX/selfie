@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import random
 import string
@@ -212,7 +214,11 @@ def do_logout():
 @view('slideshow')
 def slideshow():
     return {
-        'tasks': Task.get_latest_approved_selfies(10)
+        'tasks': Task
+            .select()
+            .where((Task.is_approved == True) & (Task.is_selfie_game == True))
+            .order_by(Task.approved_time.desc())
+            .limit(10)
     }
     
 
