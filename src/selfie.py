@@ -71,6 +71,9 @@ def do_approve_task():
             task.is_approved = True
             task.approved_time = datetime.utcnow()
             task.save()
+            User.update(score=User.score + task.reward).where(User.id == task.assignee).execute()
+            if task.partner:
+                User.update(score=User.score + task.reward / 2).where(User.id == task.partner).execute()
         elif request.forms.get('decision') == 'reject':
             if task.is_photo_required:
                 task.delete_photo()
@@ -163,7 +166,10 @@ def do_add_requirement():
 
 @view('user_feed')
 def user_feed(user):
-    return {'user': user}
+    return {
+        'user': user,
+        'tasks': user.tasks.order_by(Task.is_complete, Task.difficulty)
+    }
 
 
 @post('/user/upload_photo')
