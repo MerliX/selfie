@@ -71,6 +71,7 @@
                   <th>Требование</th>
                   <th>Сложность</th>
                   <th>Основное</th>
+                  <th></th>
               </tr>
             </thead>
 
@@ -83,6 +84,12 @@
                   % if requirement.is_basic:
                   <i class="mdi-action-done"></i>
                   % end
+                </td>
+                <td>
+                  <form method="POST" action="/moderator/delete_requirement" class="no-margin">
+                    <input type="hidden" name="requirement_id" value="{{requirement.id}}">
+                    <button type="submit" class="waves-effect waves-red btn-flat red-text no-margin"><i class="mdi-action-delete"></i></button>
+                  </form>
                 </td>
               </tr>
               % end

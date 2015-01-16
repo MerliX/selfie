@@ -161,6 +161,18 @@ def do_add_requirement():
         redirect('/moderator/requirements')
 
 
+@post('/moderator/delete_requirement')
+@check_moderator
+def do_delete_requirement():
+    try:
+        requirement = Requirement.get(Requirement.id == request.forms.get('requirement_id'))
+    except Requirement.DoesNotExist:
+        pass
+    else:
+        requirement.delete_instance()
+    redirect('/moderator/requirements')
+
+
 # user actions
 
 @view('user_feed')
