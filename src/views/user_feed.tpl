@@ -20,6 +20,14 @@
     <div class="section">
       <div class="row">
         <div class="col s12 m9 l6">
+        % if no_tasks_available:
+          <div class="card orange darken-1">
+            <div class="card-content white-text">
+              <p>Похоже, у нас кончились задания. Покажи эту надпись организаторам.</p>
+            </div>
+          </div>
+        % end
+
         % for task in tasks:
           % if task.is_photo_required:
             % if task.is_complete:

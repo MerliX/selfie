@@ -2,7 +2,7 @@
 
 import os
 from peewee import *
-from settings import PHOTO_PATH, DB_PATH
+from settings import PHOTO_PATH, DB_PATH, SELFIE_REWARD
 
 db = SqliteDatabase(DB_PATH)
 
@@ -20,19 +20,6 @@ class User(Model):
     name = CharField(unique=True)
     access_code = CharField(unique=True)
     score = IntegerField(default=0)
-
-    def get_random_victim(self):
-        previous_partners = [
-            s.partner.id 
-            for s in self.tasks.select(Task.partner).join(User, on=Task.partner)
-        ]
-        previous_partners.append(self.id)
-        return (User
-            .select()
-            .where(~(User.id << previous_partners))
-            .order_by(fn.Random())
-            .get()
-        )
 
     @property
     def approved_selfie_ratio(self):
@@ -66,8 +53,8 @@ class Task(Model):
     is_selfie_game = BooleanField(default=True)
     is_approved = BooleanField(default=False)
     approved_time = DateTimeField(null=True)
-    description = TextField()
-    reward = IntegerField()
+    description = TextField(null=True)
+    reward = IntegerField(default=SELFIE_REWARD)
     difficulty = IntegerField()
 
     @property
@@ -77,6 +64,12 @@ class Task(Model):
     @property
     def photo_url(self):
         return '/selfies/%s.jpg' % self.id
+
+    def find_partner(self):
+        pass
+
+    def generate_description(self):
+        pass
 
     def delete_photo(self):
         os.remove(self.photo_path)

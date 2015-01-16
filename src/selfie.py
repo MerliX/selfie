@@ -8,7 +8,7 @@ from itertools import chain
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request
 from models import User, Task, Requirement
-from settings import HOST, PORT, DEBUG, SELFIE_REWARD
+from settings import HOST, PORT, DEBUG
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
 
@@ -115,7 +115,6 @@ def do_add_user():
             task = Task(
                 assignee=user,
                 description=u'Сделай селфи, чтобы хорошо было видно лицо.',
-                reward=SELFIE_REWARD,
                 difficulty=0
             )
             task.save()
@@ -166,9 +165,20 @@ def do_add_requirement():
 
 @view('user_feed')
 def user_feed(user):
+    no_tasks_available = False
+    while user.approved_selfie_ratio >= .6:
+        task = Task(assignee=User, difficulty=user.current_difficulty + 1)
+        task.find_partner()
+        task.generate_description()
+        if not task.description:
+            no_tasks_available = True
+            break
+        task.save()
+
     return {
         'user': user,
-        'tasks': user.tasks.order_by(Task.is_complete, Task.difficulty)
+        'tasks': user.tasks.order_by(Task.is_complete, Task.difficulty),
+        'no_tasks_available': no_tasks_available
     }
 
 
