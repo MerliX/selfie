@@ -8,7 +8,7 @@ from itertools import chain
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request
 from models import User, Task, Requirement
-from settings import HOST, PORT, DEBUG
+from settings import HOST, PORT, DEBUG, SELFIE_REWARD
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
 
@@ -104,8 +104,18 @@ def do_add_user():
                     random.sample('aeiouy', 3)
                 ))
             )
-            user = User(name=user_name, access_code=user_access_code)
+            user = User(
+                name=user_name, 
+                access_code=user_access_code
+            )
             user.save()
+            task = Task(
+                assignee=user,
+                description=u'Сделай селфи, чтобы хорошо было видно лицо.',
+                reward=SELFIE_REWARD,
+                difficulty=0
+            )
+            task.save()
         else:
             user_access_code = user.access_code
         redirect(

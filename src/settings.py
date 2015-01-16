@@ -6,6 +6,8 @@ HOST = 'localhost'
 PORT = 8080
 DEBUG = False
 
+SELFIE_REWARD = 10
+
 
 try:
 	from local_settings import *
