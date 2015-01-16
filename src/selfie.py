@@ -140,8 +140,8 @@ def moderator_requirements():
         'created_difficulty': request.query.created_difficulty,
         'created_is_basic': request.query.created_is_basic,
         'requirements': Requirement
-            .select()
-            .order_by(Requirement.is_basic.desc(), Requirement.difficulty)
+                        .select()
+                        .order_by(Requirement.is_basic.desc(), Requirement.difficulty)
     }
 
 
@@ -264,10 +264,10 @@ def do_logout():
 def slideshow():
     return {
         'tasks': Task
-            .select()
-            .where((Task.is_approved == True) & (Task.is_selfie_game == True))
-            .order_by(Task.approved_time.desc())
-            .limit(10)
+                 .select()
+                 .where((Task.is_approved == True) & (Task.is_selfie_game == True))
+                 .order_by(Task.approved_time.desc())
+                 .limit(10)
     }
     
 
