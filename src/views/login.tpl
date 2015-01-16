@@ -4,7 +4,7 @@
   <nav>
     <div class="container">
       <div class="nav-wrapper">
-        <a href="/" class="brand-logo">Селфи ЗМШ 2015</a>
+        <a href="/" class="brand-logo">Убийца Фейсбука</a>
       </div>
     </div>
   </nav>

@@ -3,7 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <link type="text/css" rel="stylesheet" href="/static/css/materialize.min.css" media="screen,projection">
     <link type="text/css" rel="stylesheet" href="/static/css/selfie.css" media="screen,projection"/>
-    <title>Селфи ЗМШ 2015</title>
+    <title>Убийца Фейсбука</title>
   </head>
 
   <body>

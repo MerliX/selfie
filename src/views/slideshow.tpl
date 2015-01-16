@@ -6,8 +6,8 @@
 
   <body>
     <div class="wrapper">
-      % for selfie in selfies:
-      <img src="{{selfie.photo_url}}">
+      % for task in tasks:
+      <img src="{{task.photo_url}}">
       % end
     </div>
     <script type="text/javascript" src="/static/js/jquery-2.1.3.min.js"></script>

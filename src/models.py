@@ -1,35 +1,14 @@
 import os
-from collections import defaultdict
 from peewee import *
 from settings import PHOTO_PATH, DB_PATH
 
 db = SqliteDatabase(DB_PATH)
 
 
-class Perk(Model):
-    text = TextField()
-    level = IntegerField()
-
-    @staticmethod
-    def get_least_used(level):
-        if level == 0:
-            return (Perk
-                .select(Perk, fn.Count(User.id))
-                .join(User, JOIN_LEFT_OUTER)
-                .where(Perk.level == 0)
-                .group_by(Perk)
-                .order_by(fn.Count(User.id))
-                .get()
-            )
-        else:
-            return (Perk
-                .select(Perk, fn.Count(Selfie.id))
-                .join(Selfie, JOIN_LEFT_OUTER)
-                .where(Perk.level == level)
-                .group_by(Perk)
-                .order_by(fn.Count(Selfie.id))
-                .get()
-            )
+class Requirement(Model):
+    description = TextField()
+    difficulty = IntegerField()
+    is_basic = BooleanField(default=True)
 
     class Meta:
         database = db
@@ -38,69 +17,63 @@ class Perk(Model):
 class User(Model):
     name = CharField(unique=True)
     access_code = CharField(unique=True)
-    perk = ForeignKeyField(Perk, related_name='users')
-
-    @staticmethod
-    def get_moderator_summary():
-        return (User
-            .select(User, fn.Max(Perk.level).alias('level'))
-            .join(Selfie)
-            .join(Perk)
-            .group_by(User.id)
-            .order_by(Perk.level.desc())
-        )
-
-    def get_ordered_selfies(self):
-        selfies = defaultdict(list)
-        for selfie in self.selfies.select(Selfie, Perk).join(Perk):
-            selfies[selfie.perk.level].append(selfie)
-        return selfies
+    score = IntegerField(default=0)
 
     def get_random_victim(self):
-        previous_victims = [
-            s.victim.id 
-            for s in self.selfies.select(Selfie.victim).join(User, on=Selfie.victim)
+        previous_partners = [
+            s.partner.id 
+            for s in self.tasks.select(Task.partner).join(User, on=Task.partner)
         ]
+        previous_partners.append(self.id)
         return (User
             .select()
-            .where(~(User.id << previous_victims))
+            .where(~(User.id << previous_partners))
             .order_by(fn.Random())
             .get()
         )
 
     @property
-    def approved_ratio(self):
-        approved = self.selfies.where(Selfie.is_approved == True).count()
-        total = self.selfies.count() or 1
+    def approved_selfie_ratio(self):
+        approved = (self.tasks
+            .where((Task.is_approved == True) & (Task.is_selfie_game == True))
+            .count()
+        )
+        total = (self.tasks
+            .where(Task.is_selfie_game == True)
+            .count()
+        ) or 1
         return float(approved) / total
 
     @property
-    def next_level(self):
+    def current_difficulty(self):
         return (self
-            .selfies
-            .select(fn.Max(Perk.level))
-            .join(Perk)
-            .scalar() + 1
+            .tasks
+            .select(fn.Max(Task.difficulty))
+            .scalar()
         )
 
     class Meta:
         database = db
 
 
-class Selfie(Model):
-    author = ForeignKeyField(User, related_name='selfies')
-    victim = ForeignKeyField(User, related_name='mentions')
-    is_uploaded = BooleanField(default=False)
+class Task(Model):
+    assignee = ForeignKeyField(User, related_name='tasks')
+    partner = ForeignKeyField(User, related_name='mentions', null=True)
+    is_complete = BooleanField(default=False)
+    is_photo_required = BooleanField(default=True)
+    is_selfie_game = BooleanField(default=True)
     is_approved = BooleanField(default=False)
     approved_time = DateTimeField(null=True)
-    perk = ForeignKeyField(Perk, related_name='selfies')
+    description = TextField()
+    reward = IntegerField()
+    difficulty = IntegerField()
 
     @staticmethod
-    def get_latest_approved(limit):
-        return (Selfie
+    def get_latest_approved_selfies(limit):
+        return (Task
             .select()
-            .where(Selfie.is_approved == True)
-            .order_by(Selfie.approved_time.desc())
+            .where((Task.is_approved == True) & (Task.is_selfie_game == True))
+            .order_by(Task.approved_time.desc())
             .limit(limit)
         )
 
@@ -110,14 +83,7 @@ class Selfie(Model):
 
     @property
     def photo_url(self):
-        return '/selfies/%s.jpg' % self.id    
-
-    def combined_perks(self):
-        perks = set()
-        perks.add(self.perk.text)
-        perks.add(self.author.perk.text)
-        perks.add(self.victim.perk.text)
-        return list(perks)
+        return '/selfies/%s.jpg' % self.id
 
     def delete_photo(self):
         os.remove(self.photo_path)

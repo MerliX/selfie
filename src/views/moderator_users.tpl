@@ -8,7 +8,7 @@
         <ul id="nav-mobile" class="right side-nav">
           <li><a href="/moderator/feed"><i class="mdi-action-thumbs-up-down left"></i>Лента</a></li>
           <li><a href="/moderator/users"><i class="mdi-social-people left"></i>Люди</a></li>
-          <li><a href="/moderator/perks"><i class="mdi-action-assignment left"></i>Задания</a></li>
+          <li><a href="/moderator/requirements"><i class="mdi-action-assignment left"></i>Требования</a></li>
           <li><a href="/logout"><i class="mdi-action-exit-to-app left"></i>Выход</a></li>
         </ul>
         <a class="button-collapse" href="#" data-activates="nav-mobile"><i class="mdi-navigation-menu"></i></a>
@@ -25,8 +25,7 @@
         <div class="col s12">
           <blockquote>
             Имя: {{created_name}}<br>
-            Код доступа: {{created_access_code}}<br>
-            Вечное задание: {{user_perk}}
+            Код доступа: {{created_access_code}}
           </blockquote>
         </div>
       </div>
@@ -56,7 +55,7 @@
               <tr>
                 <th>Имя</th>
                 <th>Код доступа</th>
-                <th>Уровень</th>
+                <th>Очки</th>
               </tr>
             </thead>
 
@@ -65,7 +64,7 @@
               <tr>
                 <td>{{user.name}}</td>
                 <td>{{user.access_code}}</td>
-                <td>{{user.level}}</td>
+                <td>{{user.score}}</td>
               </tr>
               % end
             </tbody>

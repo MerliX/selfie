@@ -2,13 +2,13 @@ import os
 import random
 import string
 from datetime import datetime
+from itertools import chain
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request
-from models import User, Perk, Selfie
+from models import User, Task, Requirement
 from settings import HOST, PORT, DEBUG
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
-ALLOWED_CODE_SYMBOLS = string.lowercase + string.digits
 
 
 @get('/')
@@ -44,45 +44,36 @@ def check_moderator(func):
 @check_moderator
 def moderator_feed():
     try:
-        selfie = Selfie.get(Selfie.is_uploaded == True, Selfie.is_approved == False)
-    except Selfie.DoesNotExist:
-        selfie = None
+        task = Task.get(Task.is_complete == True, Task.is_approved == False)
+    except Task.DoesNotExist:
+        task = None
 
     return {
-        'created_perk': request.query.created_perk,
-        'created_level': request.query.created_level,
-        'selfie': selfie
+        'task': task
     }
 
 
-@post('/moderator/approve_selfie')
+@post('/moderator/approve_task')
 @check_moderator
-def do_approve_selfie():
+def do_approve_task():
     try:
-        selfie = Selfie.get(
-            Selfie.id == request.forms.get('selfie_id'),
-            Selfie.is_uploaded == True,
-            Selfie.is_approved == False
+        task = Task.get(
+            Task.id == request.forms.get('task_id'),
+            Task.is_complete == True,
+            Task.is_approved == False
         )
-    except Selfie.DoesNotExist:
+    except Task.DoesNotExist:
         pass
     else:
         if request.forms.get('decision') == 'approve':
-            selfie.is_approved = True
-            selfie.approved_time = datetime.utcnow()
-            selfie.save()
-
-            if selfie.author.approved_ratio >= 2./3:
-                next_level = selfie.author.next_level
-                for i in range(2):
-                    new_perk = Perk.get_least_used(next_level)
-                    new_victim = selfie.author.get_random_victim()
-                    Selfie(author=selfie.author, victim=new_victim, perk=new_perk).save()
-
+            task.is_approved = True
+            task.approved_time = datetime.utcnow()
+            task.save()
         elif request.forms.get('decision') == 'reject':
-            selfie.delete_photo()
-            selfie.is_uploaded = False
-            selfie.save()
+            if task.is_photo_required:
+                task.delete_photo()
+            task.is_complete = False
+            task.save()
     redirect('/')
 
 
@@ -93,8 +84,7 @@ def moderator_users():
     return {
         'created_name': request.query.created_name,
         'created_access_code': request.query.created_access_code,
-        'user_perk': request.query.user_perk,
-        'users': User.get_moderator_summary()
+        'users': User.select().order_by(User.score.desc())
     }
 
 
@@ -106,42 +96,55 @@ def do_add_user():
         try:
             user = User.get(User.name == user_name)
         except User.DoesNotExist:
-            user_access_code = ''.join(random.sample(ALLOWED_CODE_SYMBOLS, 6))
-            perk = Perk.get_least_used(0)
-            user = User(name=user_name, access_code=user_access_code, perk=perk)
+            user_access_code = ''.join(
+                chain(*zip(
+                    random.sample('bcdfghjklmnpqrstvwxz', 3),
+                    random.sample('aeiouy', 3)
+                ))
+            )
+            user = User(name=user_name, access_code=user_access_code)
             user.save()
-            Selfie(author=user, victim=user, perk=perk).save()
         else:
             user_access_code = user.access_code
         redirect(
-            '/moderator/users?created_name=%s&created_access_code=%s&user_perk=%s' % 
-            (user_name.decode('utf-8'), user_access_code, user.perk.text)
+            '/moderator/users?created_name=%s&created_access_code=%s' % 
+            (user_name.decode('utf-8'), user_access_code)
         )
     else:
         redirect('/moderator/users')
 
 
-@get('/moderator/perks')
-@view('moderator_perks')
+@get('/moderator/requirements')
+@view('moderator_requirements')
 @check_moderator
-def moderator_perks():
+def moderator_requirements():
     return {
-        'created_perk': request.query.created_perk,
-        'created_level': request.query.created_level,
-        'perks': Perk.select().order_by(Perk.level)
+        'created_requirement': request.query.created_requirement,
+        'created_difficulty': request.query.created_difficulty,
+        'created_is_basic': request.query.created_is_basic,
+        'requirements': Requirement.select().order_by(Requirement.is_basic, Requirement.difficulty)
     }
 
 
-@post('/moderator/add_perk')
+@post('/moderator/add_requirement')
 @check_moderator
-def do_add_perk():
-    perk_text = request.forms.get('add_perk_text')
-    perk_level = request.forms.get('add_perk_level')
-    if perk_level and perk_text:
-        Perk(text=perk_text, level=perk_level).save()
-        redirect('/moderator/perks?created_perk=%s&created_level=%s' % (perk_text.decode('utf-8'), perk_level))
+def do_add_requirement():
+    requirement_description = request.forms.get('add_requirement_description')
+    requirement_difficulty = request.forms.get('add_requirement_difficulty')
+    requirement_is_basic = bool(request.forms.get('add_requirement_is_basic'))
+    if requirement_description and requirement_difficulty:
+        Requirement(
+            description=requirement_description, 
+            difficulty=requirement_difficulty,
+            is_basic=requirement_is_basic
+        ).save()
+        redirect('/moderator/requirements?created_requirement=%s&created_difficulty=%s&created_is_basic=%s' % (
+            requirement_description.decode('utf-8'), 
+            requirement_difficulty,
+            requirement_is_basic
+        ))
     else:
-        redirect('/moderator/perks')
+        redirect('/moderator/requirements')
 
 
 # user actions
@@ -151,15 +154,16 @@ def user_feed(user):
     return {'user': user}
 
 
-@post('/user/upload_selfie')
-def do_upload_selfie():
+@post('/user/upload_photo')
+def do_upload_photo():
     try:
-        selfie = Selfie.get(
-            Selfie.id == request.forms.get('selfie_id'), 
-            Selfie.is_uploaded == False
+        task = Task.get(
+            Task.id == request.forms.get('task_id'),
+            Task.is_photo_required == True, 
+            Task.is_complete == False
         )
-        if selfie.author.access_code == request.get_cookie('access_code'):
-            photo = Image.open(request.files.get('selfie_file').file)
+        if task.assignee.access_code == request.get_cookie('access_code'):
+            photo = Image.open(request.files.get('photo_file').file)
             try:
                 orientation = photo._getexif()[274]
             except (TypeError, AttributeError, KeyError):
@@ -173,10 +177,10 @@ def do_upload_selfie():
                     }[orientation]
                     photo = photo.rotate(degrees)
             photo.thumbnail((1024, 1024))
-            photo.save(selfie.photo_path)
-            selfie.is_uploaded = True
-            selfie.save()
-    except Selfie.DoesNotExist:
+            photo.save(task.photo_path)
+            task.is_complete = True
+            task.save()
+    except Task.DoesNotExist:
         pass
     redirect('/')
 
@@ -208,7 +212,7 @@ def do_logout():
 @view('slideshow')
 def slideshow():
     return {
-        'selfies': Selfie.get_latest_approved(10)
+        'tasks': Task.get_latest_approved_selfies(10)
     }
     
 
