@@ -216,4 +216,4 @@ def slideshow():
     }
     
 
-run(host=HOST, port=PORT, debug=DEBUG)
+run(host=HOST, port=PORT, debug=DEBUG, reloader=DEBUG)
