@@ -166,18 +166,24 @@ def do_add_requirement():
 @view('user_feed')
 def user_feed(user):
     no_tasks_available = False
-    while user.approved_selfie_ratio >= .6:
-        task = Task(assignee=User, difficulty=user.current_difficulty + 1)
+    while user.needs_more_selfie_tasks:
+        task = Task(assignee=user, difficulty=user.current_difficulty + 1)
+
         task.find_partner()
-        task.generate_description()
-        if not task.description:
+        if task.partner is None:
             no_tasks_available = True
             break
+
+        task.generate_description()
+        if task.description is None:
+            no_tasks_available = True
+            break
+
         task.save()
 
     return {
         'user': user,
-        'tasks': user.tasks.order_by(Task.is_complete, Task.difficulty),
+        'tasks': user.tasks.order_by(Task.is_complete, Task.difficulty.desc()),
         'no_tasks_available': no_tasks_available
     }
 

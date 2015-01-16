@@ -24,12 +24,13 @@
       <div class="row">
         <div class="col s12">
           <blockquote>
-            Задание: {{created_requirement}}
+            Требование
             % if created_is_basic == 'True':
-            (основное)
+            (основное):
             % else:
-            (дополнительное)
+            (дополнительное):
             % end
+            {{created_requirement}}
             <br>
             Сложность: {{created_difficulty}}
           </blockquote>
