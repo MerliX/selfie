@@ -1,0 +1,5 @@
+strictness: high
+ignore-paths:
+  - static
+  - src/bottle.py
+  - src/views
