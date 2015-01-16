@@ -122,7 +122,7 @@ def moderator_requirements():
         'created_requirement': request.query.created_requirement,
         'created_difficulty': request.query.created_difficulty,
         'created_is_basic': request.query.created_is_basic,
-        'requirements': Requirement.select().order_by(Requirement.is_basic, Requirement.difficulty)
+        'requirements': Requirement.select().order_by(Requirement.is_basic.desc(), Requirement.difficulty)
     }
 
 
