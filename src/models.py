@@ -43,6 +43,7 @@ class User(Model):
         return (self
             .tasks
             .select(fn.Max(Task.difficulty))
+            .where(Task.is_selfie_game == True)
             .scalar()
         )
 
@@ -79,7 +80,11 @@ class Task(Model):
                     ~(User.id << self.assignee
                                      .tasks
                                      .select(Task.partner)
-                                     .where(~(Task.partner >> None)))
+                                     .where(
+                                        ~(Task.partner >> None) 
+                                        & (Task.is_selfie_game == True)
+                                     )
+                    )
                     & (User.id != self.assignee.id)
                 )
                 .group_by(User.id)
