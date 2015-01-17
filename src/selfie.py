@@ -224,23 +224,23 @@ def do_regenerate_selfie():
 def user_feed(user):
     no_tasks_available = False
     while user.needs_more_selfie_tasks:
-        task = Task(assignee=user, difficulty=user.current_difficulty + 1)
+        selfie = Task(assignee=user, difficulty=user.current_difficulty + 1)
 
-        task.find_partner()
-        if task.partner is None:
+        selfie.find_partner()
+        if selfie.partner is None:
             no_tasks_available = True
             break
 
-        task.generate_description()
-        if task.description is None:
+        selfie.generate_description()
+        if selfie.description is None:
             no_tasks_available = True
             break
 
-        task.save()
+        selfie.save()
 
     return {
         'user': user,
-        'tasks': user.tasks.order_by(Task.is_complete, Task.approved_time.desc()),
+        'tasks': user.tasks.order_by(Task.is_complete, Task.is_approved, Task.approved_time.desc()),
         'no_tasks_available': no_tasks_available
     }
 
