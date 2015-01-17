@@ -4,7 +4,7 @@
   <nav>
     <div class="container">
       <div class="nav-wrapper">
-        <a href="/" class="brand-logo">Лента</a>
+        <a href="/" class="brand-logo"><i class="mdi-editor-attach-money user-money-icon"></i>{{user.score}}</a>
         <ul id="nav-mobile" class="right side-nav">
           <li><a href="/"><i class="mdi-image-portrait left"></i>Лента</a></li>
           <li><a href="/logout"><i class="mdi-action-exit-to-app left"></i>Выход</a></li>

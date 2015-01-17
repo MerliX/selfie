@@ -15,3 +15,8 @@ label input[type=file] {
 .collapsible-body .card {
     margin: 10px;
 }
+
+.user-money-icon {
+	position: relative;
+	bottom: -2px;
+}
