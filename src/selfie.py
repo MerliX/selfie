@@ -245,7 +245,7 @@ def login(wrong_code=False):
 
 @post('/')
 def do_login():
-    access_code = request.forms.get('access_code')
+    access_code = request.forms.get('access_code').lower()
     if access_code:
         response.set_cookie('access_code', access_code)
     redirect('/')
