@@ -200,7 +200,7 @@ def user_feed(user):
 
     return {
         'user': user,
-        'tasks': user.tasks.order_by(Task.is_complete, Task.difficulty.desc()),
+        'tasks': user.tasks.order_by(Task.is_complete, Task.approved_time.desc()),
         'no_tasks_available': no_tasks_available
     }
 
