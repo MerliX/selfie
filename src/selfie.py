@@ -178,6 +178,46 @@ def do_delete_requirement():
     redirect('/moderator/requirements')
 
 
+@get('/moderator/tasks')
+@view('moderator_tasks')
+@check_moderator
+def moderator_tasks():
+    return {
+        'selfies': Task
+                   .select()
+                   .where(
+                        (Task.is_approved == False) 
+                        & (Task.is_selfie_game == True)
+                        & (Task.difficulty > 0)
+                    )
+                   .order_by(Task.is_complete, Task.difficulty.desc())
+    }
+
+
+@post('/moderator/regenerate_selfie')
+@check_moderator
+def do_regenerate_selfie():
+    try:
+        selfie = Task.get(
+            Task.id == request.forms.get('selfie_id'),
+            Task.is_approved == False,
+            Task.is_selfie_game == True,
+            Task.difficulty > 0
+        )
+    except Task.DoesNotExist:
+        pass
+    else:
+        selfie.find_partner()
+        if selfie.partner is not None:
+            selfie.generate_description()
+            if selfie.description is not None:
+                if selfie.is_complete:
+                    selfie.is_complete = False
+                    selfie.delete_photo()
+                selfie.save()
+    redirect('/moderator/tasks')
+
+
 # user actions
 
 @view('user_feed')
