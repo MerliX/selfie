@@ -305,7 +305,11 @@ def slideshow():
     return {
         'tasks': Task
                  .select()
-                 .where((Task.is_approved == True) & (Task.is_selfie_game == True))
+                 .where(
+                    (Task.is_approved == True) 
+                    & (Task.is_selfie_game == True)
+                    & (Task.difficulty > 0)
+                 )
                  .order_by(Task.approved_time.desc())
                  .limit(10)
     }
