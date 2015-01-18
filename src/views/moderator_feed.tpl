@@ -5,9 +5,9 @@
 <main>
   <div class="container">
     <div class="section">
+      % if task:
       <div class="row">
         <div class="col s12 m9 l6">
-          % if task:
           <div class="card">
             <div class="card-image">
               <img src="{{task.photo_url}}">
@@ -35,11 +35,35 @@
               </form>
             </div>
           </div>
-          % else:
-          <p>Пока ничего нет.</p>
-          % end
         </div>
       </div>
+      % if task.partner:
+      <div class="row">
+        <div class="col s6 m4 l3">
+          <div class="card">
+            <div class="card-image">
+              <img src="{{task.assignee.photo_url}}">
+              <span class="card-title">{{task.assignee.name}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col s6 m4 l3">
+          <div class="card">
+            <div class="card-image">
+              <img src="{{task.partner.photo_url}}">
+              <span class="card-title">{{task.partner.name}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      % end
+      % else:
+      <div class="row">
+        <div class="col s12 m9 l6">
+          <p>Пока ничего нет.</p>
+        </div>
+      </div>
+      % end
     </div>
   </div>
 </main>

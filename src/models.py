@@ -47,6 +47,18 @@ class User(Model):
             .scalar()
         )
 
+    @property
+    def photo_url(self):
+        try:
+            first_selfie = self.tasks.where(
+                (Task.is_selfie_game == True)
+                & (Task.partner >> None)
+                & (Task.is_complete == True)
+            ).get()
+        except Task.DoesNotExist:
+            return '/selfies/unknown.jpg'
+        return first_selfie.photo_url    
+
     class Meta(object):
         database = db
 
