@@ -15,7 +15,7 @@
                 {{task.assignee.name}}
                 % if task.partner:
                 и {{task.partner.name}}
-                %end
+                % end
               </span>
             </div>
             <div class="card-content">
