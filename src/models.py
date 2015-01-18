@@ -74,6 +74,7 @@ class Task(Model):
     description = TextField(null=True)
     reward = IntegerField(default=SELFIE_REWARD)
     difficulty = IntegerField()
+    basic_requirement = ForeignKeyField(Requirement, null=True)
 
     @property
     def photo_path(self):
@@ -108,16 +109,22 @@ class Task(Model):
 
     def generate_description(self):
         difficulty_left = self.difficulty
-        need_basic = True
+        basic_requirement = None
         used_requirements = []
+        exclude_requirements = [
+            r.basic_requirement 
+            for r in self.assignee.tasks.where(~(Task.basic_requirement >> None))
+        ]
 
         try:
             while difficulty_left > 0:
                 requirement = (Requirement
                     .select()
                     .where(
-                        (Requirement.is_basic == need_basic)
+                        (Requirement.is_basic == (basic_requirement is None))
                         & (Requirement.difficulty <= difficulty_left)
+                        & ~(Requirement.id << exclude_requirements)
+                        & ~(Requirement.id << used_requirements)
                     )
                     .order_by(fn.Random())
                     .get()
@@ -125,12 +132,14 @@ class Task(Model):
 
                 difficulty_left -= requirement.difficulty
                 used_requirements.append(requirement)
-                need_basic = False
+                if basic_requirement is None:
+                    basic_requirement = requirement
         except Requirement.DoesNotExist:
             pass
 
         if used_requirements:
             self.description = ' '.join([r.description for r in used_requirements])
+            self.basic_requirement = basic_requirement
 
 
     def delete_photo(self):
