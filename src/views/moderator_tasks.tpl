@@ -7,6 +7,12 @@
     <div class="section">
       <div class="row">
         <div class="col s12">
+          <p><i class="mdi-action-done"></i> выполнено, на модерации</p>
+          <p><i class="mdi-content-clear"></i> модератор отклонил</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
           <table class="striped">
             <thead>
               <tr>
