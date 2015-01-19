@@ -115,6 +115,9 @@ class Task(Model):
         exclude_requirements = [
             r.basic_requirement 
             for r in self.assignee.tasks.where(~(Task.basic_requirement >> None))
+        ] + [
+            r.basic_requirement
+            for r in self.assignee.mentions
         ]
 
         try:
