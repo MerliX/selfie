@@ -23,7 +23,7 @@
         % if no_tasks_available:
           <div class="card orange darken-1">
             <div class="card-content white-text">
-              <p>Похоже, у нас кончились задания. Покажи эту надпись организаторам.</p>
+              <p>Похоже, у нас кончились задания. Загляни сюда еще раз через полчаса.</p>
             </div>
           </div>
         % end
