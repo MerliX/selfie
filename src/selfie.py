@@ -5,11 +5,22 @@ import random
 from datetime import datetime
 from itertools import chain
 from PIL import Image
-from bottle import get, post, run, view, response, redirect, request
-from models import User, Task, Requirement
+from bottle import get, post, run, view, response, redirect, request, hook
+from models import User, Task, Requirement, db
 from settings import HOST, PORT, DEBUG
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
+
+
+@hook('before_request')
+def _connect_db():
+    db.connect()
+
+
+@hook('after_request')
+def _close_db():
+    if not db.is_closed():
+        db.close()
 
 
 @get('/')
