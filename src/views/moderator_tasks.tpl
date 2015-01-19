@@ -24,6 +24,9 @@
                   % if selfie.is_complete:
                   <i class="mdi-action-done"></i>
                   % end
+                  % if selfie.is_rejected:
+                  <i class="mdi-content-clear"></i>
+                  % end
                 </td>
                 <td>
                   <p>

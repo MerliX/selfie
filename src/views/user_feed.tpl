@@ -53,7 +53,7 @@
               % end
             </div>
             % else:
-            <div class="card blue-grey darken-1">
+            <div class="card {{'red darken-2' if task.is_rejected else 'blue-grey darken-1'}}">
               <div class="card-content white-text">
                 <span class="card-title">
                   Ты
@@ -62,6 +62,9 @@
                   % end
                 </span>
                 <p>{{task.description}}</p>
+                % if task.is_rejected:
+                <p>Модератор отклонил эту фотографию, потому что она не соответствует заданию.</p>
+                % end
               </div>
               <div class="card-action valign-wrapper">
                 <form action="/user/upload_photo" method="POST" enctype="multipart/form-data" class="no-margin">

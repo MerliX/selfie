@@ -79,6 +79,7 @@ def do_approve_task():
     else:
         if request.forms.get('decision') == 'approve':
             task.is_approved = True
+            task.is_rejected = False
             task.approved_time = datetime.utcnow()
             task.save()
             User.update(score=User.score + task.reward).where(User.id == task.assignee).execute()
@@ -92,6 +93,7 @@ def do_approve_task():
             if task.is_photo_required:
                 task.delete_photo()
             task.is_complete = False
+            task.is_rejected = True
             task.save()
     redirect('/')
 
@@ -222,6 +224,7 @@ def do_regenerate_selfie():
         if selfie.partner is not None:
             selfie.generate_description()
             if selfie.description is not None:
+                selfie.is_rejected = False
                 if selfie.is_complete:
                     selfie.is_complete = False
                     selfie.delete_photo()
@@ -281,6 +284,7 @@ def do_upload_photo():
             photo.thumbnail((1024, 1024))
             photo.save(task.photo_path)
             task.is_complete = True
+            task.is_rejected = False
             task.save()
     except Task.DoesNotExist:
         pass

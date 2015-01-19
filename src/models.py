@@ -70,6 +70,7 @@ class Task(Model):
     is_photo_required = BooleanField(default=True)
     is_selfie_game = BooleanField(default=True)
     is_approved = BooleanField(default=False)
+    is_rejected = BooleanField(default=False)
     approved_time = DateTimeField(null=True)
     description = TextField(null=True)
     reward = IntegerField(default=SELFIE_REWARD)
