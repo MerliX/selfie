@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import logging
 import random
 from uuid import uuid4
 from itertools import chain
@@ -9,6 +10,9 @@ from peewee import SqliteDatabase, Model, TextField, IntegerField, BooleanField,
 from settings import PHOTO_PATH, DB_PATH, SELFIE_REWARD
 
 db = SqliteDatabase(DB_PATH)
+logger = logging.getLogger('peewee')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
 
 
 class Requirement(Model):
