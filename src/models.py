@@ -75,8 +75,8 @@ class User(Model):
 
 
 class Task(Model):
-    assignee = ForeignKeyField(User, related_name='tasks')
-    partner = ForeignKeyField(User, related_name='mentions', null=True)
+    assignee = ForeignKeyField(User, related_name='tasks', on_delete='CASCADE')
+    partner = ForeignKeyField(User, related_name='mentions', null=True, on_delete='CASCADE')
     is_complete = BooleanField(default=False)
     is_photo_required = BooleanField(default=True)
     is_selfie_game = BooleanField(default=True)
@@ -86,7 +86,7 @@ class Task(Model):
     description = TextField(null=True)
     reward = IntegerField(default=SELFIE_REWARD)
     difficulty = IntegerField()
-    basic_requirement = ForeignKeyField(Requirement, null=True)
+    basic_requirement = ForeignKeyField(Requirement, null=True, on_delete='SET NULL')
 
     @property
     def photo_path(self):
@@ -165,7 +165,7 @@ class Task(Model):
 
 
 class Coupon(Model):
-    activated_by = ForeignKeyField(User, related_name='coupons', null=True)
+    activated_by = ForeignKeyField(User, related_name='coupons', null=True, on_delete='SET NULL')
     reward = IntegerField()
     code = CharField(unique=True)
     description = TextField()
