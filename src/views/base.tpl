@@ -19,7 +19,7 @@
     <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
     <meta name="msapplication-TileColor" content="#603cba">
     <meta name="msapplication-TileImage" content="/mstile-144x144.png">
-    <title>Убийца Фейсбука</title>
+    <title>Себяшки</title>
   </head>
 
   <body>
