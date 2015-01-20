@@ -128,7 +128,7 @@ class Task(Model):
             for r in self.assignee.tasks.where(~(Task.basic_requirement >> None))
         ] + [
             r.basic_requirement
-            for r in self.assignee.mentions
+            for r in self.assignee.mentions.where(~(Task.basic_requirement >> None))
         ]
 
         try:
