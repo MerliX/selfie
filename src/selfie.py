@@ -186,9 +186,14 @@ def do_delete_requirement():
 @view('moderator_tasks')
 @check_moderator
 def moderator_tasks():
+    Assignee = User.alias()
+    Partner = User.alias()
     return {
         'selfies': Task
-                   .select()
+                   .select(Task, Assignee, Partner)
+                   .join(Assignee, on=(Task.assignee == Assignee.id))
+                   .switch(Task)
+                   .join(Partner, on=(Task.partner == Partner.id))
                    .where(
                         (Task.is_approved == False) 
                         & (Task.is_selfie_game == True)
