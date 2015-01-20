@@ -31,11 +31,11 @@ def main():
         redirect('/moderator/feed')
     
     try:
-        user = User.get(User.access_code == access_code)
+        User.get(User.access_code == access_code)
     except User.DoesNotExist:
         return login(True)
     else:
-        return user_feed(user)
+        redirect('/user/feed')
 
 
 # moderator actions
@@ -286,8 +286,11 @@ def do_delete_coupon():
 
 # user actions
 
+@get('/user/feed')
 @view('user_feed')
-def user_feed(user):
+def user_feed():
+    user = User.get(User.access_code == request.get_cookie('access_code'))
+    
     no_tasks_available = False
     while user.needs_more_selfie_tasks:
         selfie = Task(assignee=user, difficulty=user.current_difficulty + 1)
