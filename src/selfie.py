@@ -13,6 +13,7 @@ MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
 @hook('before_request')
 def _connect_db():
     db.connect()
+    db.execute_sql('PRAGMA foreign_keys=1')
 
 
 @hook('after_request')
