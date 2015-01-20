@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import random
 from datetime import datetime
-from itertools import chain
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook
 from models import User, Task, Requirement, db
@@ -117,16 +115,10 @@ def do_add_user():
         try:
             user = User.get(User.name == user_name)
         except User.DoesNotExist:
-            user_access_code = ''.join(
-                chain(*zip(
-                    random.sample('bcdfghjklmnpqrstvwxz', 3),
-                    random.sample('aeiouy', 3)
-                ))
-            )
             user = User(
-                name=user_name, 
-                access_code=user_access_code
+                name=user_name
             )
+            user.generate_access_code()
             user.save()
             task = Task(
                 assignee=user,
@@ -134,11 +126,9 @@ def do_add_user():
                 difficulty=0
             )
             task.save()
-        else:
-            user_access_code = user.access_code
         redirect(
             '/moderator/users?created_name=%s&created_access_code=%s' % 
-            (user_name.decode('utf-8'), user_access_code)
+            (user_name.decode('utf-8'), user.access_code)
         )
     else:
         redirect('/moderator/users')

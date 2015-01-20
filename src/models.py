@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import random
+from uuid import uuid4
+from itertools import chain
 from peewee import SqliteDatabase, Model, TextField, IntegerField, BooleanField, CharField, fn, \
                    ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER
 from settings import PHOTO_PATH, DB_PATH, SELFIE_REWARD
@@ -58,6 +61,14 @@ class User(Model):
         except Task.DoesNotExist:
             return '/selfies/unknown.jpg'
         return first_selfie.photo_url    
+
+    def generate_access_code(self):
+        self.access_code = ''.join(
+            chain(*zip(
+                random.sample('bcdfghjklmnpqrstvwxz', 3),
+                random.sample('aeiouy', 3)
+            ))
+        )
 
     class Meta(object):
         database = db
