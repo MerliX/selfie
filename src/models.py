@@ -162,3 +162,31 @@ class Task(Model):
 
     class Meta(object):
         database = db
+
+
+class Coupon(Model):
+    activated_by = ForeignKeyField(User, related_name='coupons', null=True)
+    reward = IntegerField()
+    code = CharField(unique=True)
+    description = TextField()
+    limit = IntegerField()
+    kind = CharField()
+    activated_time = DateTimeField(null=True)
+
+    def generate_code(self):
+        self.code = ''.join(
+            chain(*(
+                zip(
+                    random.sample('bcdfghjklmnpqrstvwxz', 3),
+                    random.sample('aeiouy', 3)
+                ) 
+                + random.sample('1234567890', 2)
+            ))
+        )
+
+    @staticmethod
+    def generate_kind():
+        return uuid4().hex
+
+    class Meta(object):
+        database = db

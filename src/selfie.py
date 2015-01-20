@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook
-from models import User, Task, Requirement, db
+from models import User, Task, Requirement, Coupon, db
 from settings import HOST, PORT, DEBUG
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
@@ -220,6 +220,68 @@ def do_regenerate_selfie():
                     selfie.delete_photo()
                 selfie.save()
     redirect('/moderator/tasks')
+
+
+@get('/moderator/coupons')
+@view('moderator_coupons')
+@check_moderator
+def moderator_coupons():
+    coupons = {}
+    for coupon in Coupon.select().order_by(Coupon.activated_by):
+        if coupon.kind not in coupons:
+            coupons[coupon.kind] = {
+                'description': coupon.description,
+                'reward': coupon.reward,
+                'limit': coupon.limit,
+                'codes': [(coupon.code, coupon.activated_by is None)]
+            }
+        else:
+            coupons[coupon.kind]['codes'].append((coupon.code, coupon.activated_by is None))
+    return {
+        'created_coupon': request.query.created_coupon,
+        'created_reward': request.query.created_reward,
+        'created_limit': request.query.created_limit,
+        'created_count': request.query.created_count,
+        'coupons': coupons
+    }
+
+
+@post('/moderator/add_coupon')
+@check_moderator
+def do_add_coupon():
+    coupon_description = request.forms.get('add_coupon_description')
+    coupon_reward = request.forms.get('add_coupon_reward')
+    coupon_limit = request.forms.get('add_coupon_limit')
+    coupon_count = int(request.forms.get('add_coupon_count'))
+    if coupon_description and coupon_reward and coupon_limit and coupon_count:
+        kind = Coupon.generate_kind()
+        for i in xrange(coupon_count):
+            coupon = Coupon(
+                description=coupon_description, 
+                reward=coupon_reward,
+                limit=coupon_limit,
+                kind=kind
+            )
+            coupon.generate_code()
+            coupon.save()
+        redirect('/moderator/coupons?created_coupon=%s&created_reward=%s&created_limit=%s&created_count=%s' % (
+            coupon_description.decode('utf-8'), 
+            coupon_reward,
+            coupon_limit,
+            coupon_count
+        ))
+    else:
+        redirect('/moderator/coupons')
+
+
+@post('/moderator/delete_coupon')
+@check_moderator
+def do_delete_coupon():
+    Coupon.delete().where(
+        (Coupon.kind == request.forms.get('coupon_kind'))
+        & (Coupon.activated_by >> None)
+    ).execute()
+    redirect('/moderator/coupons')
 
 
 # user actions
