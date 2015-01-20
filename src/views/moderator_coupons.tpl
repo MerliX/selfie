@@ -26,15 +26,15 @@
             </div>
             <div class="input-field col s4">
               <input id="add_coupon_count" name="add_coupon_count" type="text">
-              <label for="add_coupon_count">Количество кодов</label> 
+              <label for="add_coupon_count">Количество</label> 
             </div>
             <div class="input-field col s4">
               <input id="add_coupon_limit" name="add_coupon_limit" type="text">
-              <label for="add_coupon_limit">Лимит активаций</label> 
+              <label for="add_coupon_limit">Лимит</label> 
             </div>
             <div class="input-field col s4">
               <input id="add_coupon_reward" name="add_coupon_reward" type="text">
-              <label for="add_coupon_reward">Вознаграждение</label> 
+              <label for="add_coupon_reward">Баллы</label> 
             </div>
             <div class="col s12">
               <button class="btn waves-effect waves-light" type="submit"><i class="mdi-action-note-add left"></i>
@@ -53,8 +53,8 @@
             <thead>
               <tr>
                   <th>Описание</th>
-                  <th>Вознаграждение</th>
-                  <th>Лимит активаций на человека</th>
+                  <th>Баллы</th>
+                  <th>Лимит</th>
                   <th>Коды</th>
                   <th></th>
               </tr>
