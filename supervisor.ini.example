@@ -1,0 +1,6 @@
+[program:selfie]
+command=python selfie.py
+directory=/opt/selfie/src/
+autorestart=true
+stopsignal=QUIT
+environment=SELFIE_MODERATOR_CODE="123456"
