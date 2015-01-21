@@ -1,0 +1,32 @@
+upstream selfie {
+    server 127.0.0.1:8080 fail_timeout=0;
+}
+
+server {
+    listen       80;
+    server_name  selfie.beevee.ru;
+
+    client_max_body_size  5M;
+    keepalive_timeout     5;
+
+    location /static/ {
+        root  /opt/selfie/;
+    }
+
+    location /selfies/ {
+        root  /opt/selfie/;
+    }
+
+    location ~ ^/(favicon|apple-touch-icon|mstile|browserconfig).*\.(png|ico|xml)$ {
+        root /opt/selfie/static/favicons/;
+    }
+
+    location / {
+        proxy_set_header       Host $http_host;
+        proxy_set_header       X-Scheme https;
+        proxy_redirect         off;
+        proxy_connect_timeout  15;
+        proxy_read_timeout     15;
+        proxy_pass             http://selfie;
+    }
+}
