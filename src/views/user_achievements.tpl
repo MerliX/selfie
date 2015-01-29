@@ -36,10 +36,10 @@
         <div class="col s12 m9 l6">
           % for achievement in achievements: 
           <div class="card-panel {{'teal lighten-1 white-text' if achievement.code == activate_coupon else 'teal lighten-4'}}">
-            {{achievement.description}}
             <span class="achievement-reward">
               <i class="mdi-editor-attach-money user-money-icon"></i>{{achievement.reward}}
             </span>
+            {{achievement.description}}
           </div>
           % end
         </div>
