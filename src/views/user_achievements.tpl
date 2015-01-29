@@ -12,7 +12,7 @@
             % if reject_coupon == 'limit':
             Хватит уже с тебя баллов за это достижение!
             % elif reject_coupon == 'doesnotexist':
-            Такого купона нет, или его уже кто-то активировал.
+            Такого кода нет, или его уже кто-то активировал.
             % end
           </blockquote>
         </div>
@@ -23,7 +23,7 @@
           <div class="row">
             <div class="input-field col s8 m6 l3">
               <input id="coupon_code" name="coupon_code" type="text">
-              <label for="coupon_code">Код купона</label> 
+              <label for="coupon_code">Код</label> 
             </div>
             <div class="col s4">
               <button class="btn waves-effect waves-light" type="submit"><i class="mdi-action-receipt left"></i>Активировать</button>
@@ -31,18 +31,18 @@
           </div>
         </form>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col s12 m9 l6">
-        % for achievement in achievements: 
-        <div class="card-panel {{'teal lighten-1 white-text' if achievement.code == activate_coupon else 'teal lighten-4'}}">
-          {{achievement.description}}
-          <span class="achievement-reward">
-            <i class="mdi-editor-attach-money user-money-icon"></i>{{achievement.reward}}
-          </span>
+      <div class="row">
+        <div class="col s12 m9 l6">
+          % for achievement in achievements: 
+          <div class="card-panel {{'teal lighten-1 white-text' if achievement.code == activate_coupon else 'teal lighten-4'}}">
+            {{achievement.description}}
+            <span class="achievement-reward">
+              <i class="mdi-editor-attach-money user-money-icon"></i>{{achievement.reward}}
+            </span>
+          </div>
+          % end
         </div>
-        % end
       </div>
     </div>
   </div>
