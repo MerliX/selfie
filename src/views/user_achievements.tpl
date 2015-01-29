@@ -26,7 +26,7 @@
               <label for="coupon_code">Код</label> 
             </div>
             <div class="col s4">
-              <button class="btn waves-effect waves-light" type="submit"><i class="mdi-action-receipt left"></i>Активировать</button>
+              <button class="btn waves-effect waves-light" type="submit">Ура!</button>
             </div>
           </div>
         </form>
