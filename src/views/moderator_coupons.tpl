@@ -68,7 +68,7 @@
                 <td>{{coupon['limit']}}</td>
                 <td>
                   % for code, active in coupon['codes']:
-                  <span class="">{{code}}</span><br>
+                  <span class="{{'used-coupon' if not active else ''}}">{{code}}</span><br>
                   % end
                 </td>
                 <td>

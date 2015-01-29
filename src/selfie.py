@@ -287,11 +287,20 @@ def do_delete_coupon():
 
 # user actions
 
+def get_user(func):
+    def wrapper():
+        try:
+            user = User.get(User.access_code == request.get_cookie('access_code'))
+        except User.DoesNotExist:
+            redirect('/')
+        else:
+            return func(user)
+    return wrapper
+
 @get('/user/feed')
 @view('user_feed')
-def user_feed():
-    user = User.get(User.access_code == request.get_cookie('access_code'))
-    
+@get_user
+def user_feed(user):
     no_tasks_available = False
     while user.needs_more_selfie_tasks:
         selfie = Task(assignee=user, difficulty=user.current_difficulty + 1)
@@ -316,14 +325,15 @@ def user_feed():
 
 
 @post('/user/upload_photo')
-def do_upload_photo():
+@get_user
+def do_upload_photo(user):
     try:
         task = Task.get(
             Task.id == request.forms.get('task_id'),
             Task.is_photo_required == True, 
             Task.is_complete == False
         )
-        if task.assignee.access_code == request.get_cookie('access_code'):
+        if task.assignee == user:
             photo = Image.open(request.files.get('photo_file').file)
             try:
                 orientation = photo._getexif()[274]
@@ -345,6 +355,39 @@ def do_upload_photo():
     except Task.DoesNotExist:
         pass
     redirect('/')
+
+
+@get('/user/achievements')
+@view('user_achievements')
+@get_user
+def user_achievements(user):
+    return {
+        'user': user,
+        'achievements': user.coupons.order_by(Coupon.activated_time.desc()),
+        'reject_coupon': request.query.reject_coupon,
+        'activate_coupon': request.query.activate_coupon
+    }
+
+
+@post('/user/activate_coupon')
+@get_user
+def do_activate_coupon(user):
+    try:
+        coupon = Coupon.get(
+            Coupon.code == request.forms.get('coupon_code'),
+            Coupon.activated_by >> None
+        )
+        activated_count = user.coupons.where(Coupon.kind == coupon.kind).count()
+        if coupon.limit > activated_count:
+            coupon.activated_by = user
+            coupon.activated_time = datetime.utcnow()
+            coupon.save()
+            User.update(score=User.score + coupon.reward).where(User.id == user).execute()
+            redirect('/user/achievements?activate_coupon=%s' % coupon.code)
+        else:
+            redirect('/user/achievements?reject_coupon=limit')
+    except Coupon.DoesNotExist:
+        redirect('/user/achievements?reject_coupon=doesnotexist')
 
 
 # login actions
