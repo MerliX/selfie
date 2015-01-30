@@ -15,7 +15,7 @@
                 % if user.has_active_store_item(item):
                 <td colspan="2">Жди свой приз!</td>
                 % else:
-                <td>{{item.price}}</td>
+                <td><i class="mdi-editor-attach-money user-money-icon"></i>{{item.price}}</td>
                 <td>
                   <form method="POST" action="/user/buy_store_item" class="no-margin">
                     <input type="hidden" name="store_item_id" value="{{item.id}}">
