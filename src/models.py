@@ -66,6 +66,16 @@ class User(Model):
             return '/selfies/unknown.jpg'
         return first_selfie.photo_url    
 
+    def has_active_store_item(self, item):
+        return bool(self
+            .bought_items
+            .where(
+                (BoughtStoreItem.item == item)
+                & (BoughtStoreItem.is_delivered == False)
+            )
+            .count()
+        )
+
     def generate_access_code(self):
         self.access_code = ''.join(
             chain(*zip(
@@ -207,6 +217,7 @@ class StoreItem(Model):
 class BoughtStoreItem(Model):
     user = ForeignKeyField(User, related_name='bought_items', on_delete='CASCADE')
     item = ForeignKeyField(StoreItem, related_name='bought_users', on_delete='CASCADE')
+    is_delivered = BooleanField(default=False)
 
     class Meta(object):
         database = db

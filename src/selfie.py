@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook
-from models import User, Task, Requirement, Coupon, StoreItem, db
+from models import User, Task, Requirement, Coupon, StoreItem, BoughtStoreItem, db
 from settings import HOST, PORT, DEBUG
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
@@ -324,6 +324,8 @@ def do_delete_store_item():
     except StoreItem.DoesNotExist:
         pass
     else:
+        for user in item.bought_users:
+            User.update(score=User.score + item.price).where(User.id == user.user).execute()
         item.delete_instance()
     redirect('/moderator/store')
 
@@ -431,6 +433,33 @@ def do_activate_coupon(user):
             redirect('/user/achievements?reject_coupon=limit')
     except Coupon.DoesNotExist:
         redirect('/user/achievements?reject_coupon=doesnotexist')
+
+
+@get('/user/store')
+@view('user_store')
+@get_user
+def user_store(user):
+    return {
+        'user': user,
+        'items': StoreItem.select().order_by(StoreItem.price)
+    }
+
+
+@post('/user/buy_store_item')
+@get_user
+def do_buy_store_item(user):
+    try:
+        item = StoreItem.get(StoreItem.id == request.forms.get('store_item_id'))
+    except StoreItem.DoesNotExist:
+        pass
+    else:
+        if not user.has_active_store_item(item) and user.score >= item.price:
+            BoughtStoreItem.create(
+                user=user,
+                item=item
+            )
+            User.update(score=User.score - item.price).where(User.id == user).execute()
+    redirect('/user/store')
 
 
 # login actions
