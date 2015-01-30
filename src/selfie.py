@@ -330,6 +330,26 @@ def do_delete_store_item():
     redirect('/moderator/store')
 
 
+@get('/moderator/bought')
+@view('moderator_bought')
+@check_moderator
+def moderator_bought():
+    return {
+        'items': BoughtStoreItem.select().where(BoughtStoreItem.is_delivered == False)
+    }
+
+
+@post('/moderator/deliver_item')
+@check_moderator
+def do_deliver_item():
+    (BoughtStoreItem
+        .update(is_delivered=True)
+        .where(BoughtStoreItem.id == request.forms.get('item_id'))
+        .execute()
+    )
+    redirect('/moderator/bought')
+
+
 # user actions
 
 def get_user(func):
