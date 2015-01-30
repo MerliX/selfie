@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook
-from models import User, Task, Requirement, Coupon, db
+from models import User, Task, Requirement, Coupon, StoreItem, db
 from settings import HOST, PORT, DEBUG
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
@@ -283,6 +283,49 @@ def do_delete_coupon():
         & (Coupon.activated_by >> None)
     ).execute()
     redirect('/moderator/coupons')
+
+
+@get('/moderator/store')
+@view('moderator_store')
+@check_moderator
+def moderator_store():
+    return {
+        'created_item': request.query.created_item,
+        'created_price': request.query.created_price,
+        'items': StoreItem
+                 .select()
+                 .order_by(StoreItem.price)
+    }
+
+
+@post('/moderator/add_store_item')
+@check_moderator
+def do_add_store_item():
+    store_item_description = request.forms.get('add_store_item_description')
+    store_item_price = request.forms.get('add_store_item_price')
+    if store_item_description and store_item_price:
+        StoreItem(
+            description=store_item_description, 
+            price=store_item_price
+        ).save()
+        redirect('/moderator/store?created_item=%s&created_price=%s' % (
+            store_item_description.decode('utf-8'), 
+            store_item_price
+        ))
+    else:
+        redirect('/moderator/store')
+
+
+@post('/moderator/delete_store_item')
+@check_moderator
+def do_delete_store_item():
+    try:
+        item = StoreItem.get(StoreItem.id == request.forms.get('store_item_id'))
+    except StoreItem.DoesNotExist:
+        pass
+    else:
+        item.delete_instance()
+    redirect('/moderator/store')
 
 
 # user actions

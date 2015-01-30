@@ -6,7 +6,7 @@ import random
 from uuid import uuid4
 from itertools import chain
 from peewee import SqliteDatabase, Model, TextField, IntegerField, BooleanField, CharField, fn, \
-                   ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER
+                   ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER, CompositeKey
 from settings import PHOTO_PATH, DB_PATH, SELFIE_REWARD
 
 db = SqliteDatabase(DB_PATH)
@@ -194,3 +194,20 @@ class Coupon(Model):
 
     class Meta(object):
         database = db
+
+
+class StoreItem(Model):
+    description = TextField()
+    price = IntegerField()
+
+    class Meta(object):
+        database = db
+
+
+class BoughtStoreItem(Model):
+    user = ForeignKeyField(User, related_name='bought_items', on_delete='CASCADE')
+    item = ForeignKeyField(StoreItem, related_name='bought_users', on_delete='CASCADE')
+
+    class Meta(object):
+        database = db
+        primary_key = CompositeKey('user', 'item')
