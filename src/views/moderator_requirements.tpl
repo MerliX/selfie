@@ -45,9 +45,7 @@
           </div>
         </form>
       </div>
-    </div>
 
-    <div class="section">
       <div class="row">
         <div class="col s12">
           <table class="striped">
