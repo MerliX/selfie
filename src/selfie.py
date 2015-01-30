@@ -419,7 +419,7 @@ def user_achievements(user):
 def do_activate_coupon(user):
     try:
         coupon = Coupon.get(
-            Coupon.code == request.forms.get('coupon_code'),
+            Coupon.code == request.forms.get('coupon_code').lower(),
             Coupon.activated_by >> None
         )
         activated_count = user.coupons.where(Coupon.kind == coupon.kind).count()
