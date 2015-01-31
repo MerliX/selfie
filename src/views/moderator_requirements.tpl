@@ -52,8 +52,8 @@
             <thead>
               <tr>
                   <th>Требование</th>
-                  <th>Сложность</th>
-                  <th>Основное</th>
+                  <th>Сл<span class="hide-on-small-only">ожность</span></th>
+                  <th>Осн<span class="hide-on-small-only">овное</span></th>
                   <th></th>
               </tr>
             </thead>
