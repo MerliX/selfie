@@ -63,6 +63,7 @@
                 <td class="requirement-description">{{requirement.description}}</td>
                 <td class="requirement-difficulty">{{requirement.difficulty}}</td>
                 <td class="requirement-is-basic">
+                  <a name="requirement-{{requirement.id}}"></a>
                   % if requirement.is_basic:
                   <i class="mdi-action-done"></i>
                   % end

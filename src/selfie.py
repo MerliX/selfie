@@ -189,7 +189,7 @@ def do_edit_requirement():
                 requirement.difficulty = requirement_difficulty
                 requirement.is_basic = requirement_is_basic
                 requirement.save()
-    redirect('/moderator/requirements')
+    redirect('/moderator/requirements#requirement-%s' % requirement.id)
 
 
 @get('/moderator/tasks')
