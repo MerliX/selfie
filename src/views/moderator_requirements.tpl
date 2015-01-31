@@ -60,10 +60,10 @@
 
             <tbody>
               % for requirement in requirements:
-              <tr>
-                <td>{{requirement.description}}</td>
-                <td>{{requirement.difficulty}}</td>
-                <td>
+              <tr class="requirement-row" data-id="{{requirement.id}}">
+                <td class="requirement-description">{{requirement.description}}</td>
+                <td class="requirement-difficulty">{{requirement.difficulty}}</td>
+                <td class="requirement-is-basic">
                   % if requirement.is_basic:
                   <i class="mdi-action-done"></i>
                   % end
@@ -81,5 +81,30 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div id="editmodal" class="modal">
+    <form class="col s12" method="POST" action="/moderator/edit_requirement">
+      <input type="hidden" name="edit_requirement_id" id="edit_requirement_id" value="">
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="edit_requirement_description" name="edit_requirement_description" type="text">
+          <label for="edit_requirement_description">Требование</label>
+        </div>
+        <div class="input-field col s6">
+          <input id="edit_requirement_difficulty" name="edit_requirement_difficulty" type="text">
+          <label for="edit_requirement_difficulty">Сложность</label> 
+        </div>
+        <div class="input-field col s6">
+          <input type="checkbox" id="edit_requirement_is_basic" name="edit_requirement_is_basic">
+          <label for="edit_requirement_is_basic" class="black-text">Основное</label>
+        </div>
+      </div>
+      <div class="action-bar">
+        <button class="waves-effect waves-green btn-flat modal-action" type="submit"><i class="mdi-action-note-add left"></i>
+          Сохранить
+        </button>
+      </div>
+    </form>
   </div>
 </main>
