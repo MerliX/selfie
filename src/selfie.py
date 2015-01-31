@@ -170,15 +170,25 @@ def do_add_requirement():
         redirect('/moderator/requirements')
 
 
-@post('/moderator/delete_requirement')
+@post('/moderator/edit_requirement')
 @check_moderator
-def do_delete_requirement():
+def do_edit_requirement():
     try:
-        requirement = Requirement.get(Requirement.id == request.forms.get('requirement_id'))
+        requirement = Requirement.get(Requirement.id == request.forms.get('edit_requirement_id'))
     except Requirement.DoesNotExist:
         pass
     else:
-        requirement.delete_instance()
+        if request.forms.get('action') == 'delete':
+            requirement.delete_instance()
+        elif request.forms.get('action') == 'save':
+            requirement_description = request.forms.get('edit_requirement_description')
+            requirement_difficulty = request.forms.get('edit_requirement_difficulty')
+            requirement_is_basic = bool(request.forms.get('edit_requirement_is_basic'))
+            if requirement_description and requirement_difficulty:
+                requirement.description = requirement_description
+                requirement.difficulty = requirement_difficulty
+                requirement.is_basic = requirement_is_basic
+                requirement.save()
     redirect('/moderator/requirements')
 
 

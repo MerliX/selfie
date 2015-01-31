@@ -54,7 +54,6 @@
                   <th>Требование</th>
                   <th>Сл<span class="hide-on-small-only">ожность</span></th>
                   <th>Осн<span class="hide-on-small-only">овное</span></th>
-                  <th></th>
               </tr>
             </thead>
 
@@ -67,12 +66,6 @@
                   % if requirement.is_basic:
                   <i class="mdi-action-done"></i>
                   % end
-                </td>
-                <td>
-                  <form method="POST" action="/moderator/delete_requirement" class="no-margin">
-                    <input type="hidden" name="requirement_id" value="{{requirement.id}}">
-                    <button type="submit" class="waves-effect waves-red btn-flat red-text no-margin"><i class="mdi-action-delete"></i></button>
-                  </form>
                 </td>
               </tr>
               % end
@@ -101,8 +94,13 @@
         </div>
       </div>
       <div class="action-bar">
-        <button class="waves-effect waves-green btn-flat modal-action" type="submit"><i class="mdi-action-note-add left"></i>
+        <button class="waves-effect waves-green btn-flat modal-action" type="submit" name="action" value="save">
+          <i class="mdi-action-note-add left"></i>
           Сохранить
+        </button>
+        <button class="waves-effect waves-red btn-flat modal-action" type="submit" name="action" value="delete">
+          <i class="mdi-action-delete left"></i>
+          Удалить
         </button>
       </div>
     </form>
