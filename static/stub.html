@@ -1,6 +1,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="/static/css/materialize.min.css" media="screen,projection">
     <link type="text/css" rel="stylesheet" href="/static/css/selfie.css" media="screen,projection"/>
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
