@@ -372,6 +372,21 @@ def get_user(func):
             return func(user)
     return wrapper
 
+
+@get('/user/allfeeds')
+@view('user_allfeeds')
+def user_allfeeds():
+    return {
+        'tasks': Task
+                 .select()
+                 .where(
+                     (Task.is_selfie_game == True)
+                     & (Task.is_approved == True)
+                 )
+                 .order_by(Task.difficulty)
+    }
+
+
 @get('/user/feed')
 @view('user_feed')
 @get_user
