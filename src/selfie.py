@@ -123,7 +123,7 @@ def do_add_user():
             user.save()
             task = Task(
                 assignee=user,
-                description=u'Сделай селфи, чтобы хорошо было видно лицо.',
+                description=u'Сделай селфи с любимым предметом, чтобы хорошо было видно лицо.',
                 difficulty=0
             )
             task.save()
