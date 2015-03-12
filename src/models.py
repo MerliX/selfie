@@ -10,7 +10,7 @@ from settings import PHOTO_PATH, SQLITE_DB_PATH, USE_POSTGRES, POSTGRES_DB_NAME,
 
 
 if USE_POSTGRES:
-    db = PostgresqlDatabase(POSTGRES_DB_NAME)
+    db = PostgresqlDatabase(POSTGRES_DB_NAME, client_encoding='UTF8')
 else:
     db = SqliteDatabase(SQLITE_DB_PATH)
 
