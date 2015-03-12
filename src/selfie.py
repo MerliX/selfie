@@ -26,12 +26,12 @@ def _close_db():
 @get('/')
 def main():
     access_code = request.get_cookie('access_code')
-    
+   
     if access_code is None:
         return login()
     if access_code == MODERATOR_ACCESS_CODE:
         redirect('/moderator/feed')
-    
+   
     try:
         User.get(User.access_code == access_code)
     except User.DoesNotExist:
@@ -351,6 +351,5 @@ def slideshow():
                     (Task.is_approved == True)
                  )
     }
-    
 
 run(host=HOST, port=PORT, debug=DEBUG, reloader=DEBUG)
