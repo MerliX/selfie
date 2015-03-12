@@ -3,7 +3,7 @@
 PHOTO_PATH = '/opt/selfie-dump/selfies/'
 
 SQLITE_DB_PATH = '/opt/selfie-dump/base.db'
-POSTGRES_DB_NAME = 'selfie-dump'
+POSTGRES_DB_NAME = 'root'
 USE_POSTGRES = True
 
 HOST = 'localhost'
