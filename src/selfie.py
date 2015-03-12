@@ -346,6 +346,13 @@ def do_logout():
     response.set_cookie('access_code', '')
     redirect('/')
 
+@get('/recreate_db')
+def do_recreate_db():
+    if DEBUG:
+        from recreate_db import recreate_database
+        recreate_database()
+    redirect('/')
+
 
 # slideshow actions
 
