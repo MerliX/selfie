@@ -84,7 +84,6 @@ class Task(Model):
     assignee = ForeignKeyField(User, related_name='tasks', on_delete='CASCADE')
     partner = ForeignKeyField(User, related_name='mentions', null=True, on_delete='CASCADE')
     is_complete = BooleanField(default=False)
-    is_photo_required = BooleanField(default=True)
     is_approved = BooleanField(default=False)
     is_rejected = BooleanField(default=False)
     approved_time = DateTimeField(null=True)

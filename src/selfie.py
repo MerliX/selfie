@@ -3,11 +3,22 @@
 import os
 from datetime import datetime
 from PIL import Image
-from bottle import get, post, run, view, response, redirect, request, hook
+from bottle import get, post, run, view, response, redirect, request, hook, static_file, route
 from models import User, Task, Requirement, db
-from settings import HOST, PORT, DEBUG, USE_POSTGRES
+from settings import HOST, PORT, DEBUG, PHOTO_PATH, USE_POSTGRES
+
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
+
+
+
+@route('/static/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root='C:/Projects/Selfie_zmsh_2015/static/')
+
+@route('/selfies/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root=PHOTO_PATH)
 
 
 @hook('before_request')
@@ -90,8 +101,7 @@ def do_approve_task():
                     .execute()
                 )
         elif request.forms.get('decision') == 'reject':
-            if task.is_photo_required:
-                task.delete_photo()
+            task.delete_photo()
             task.is_complete = False
             task.is_rejected = True
             task.save()
@@ -284,14 +294,12 @@ def user_feed(user):
         'no_tasks_available': no_tasks_available
     }
 
-
 @post('/user/upload_photo')
 @get_user
 def do_upload_photo(user):
     try:
         task = Task.get(
             Task.id == request.forms.get('task_id'),
-            Task.is_photo_required == True,
             Task.is_complete == False
         )
         if task.assignee == user:

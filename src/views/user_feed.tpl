@@ -16,8 +16,7 @@
         % end
 
         % for task in tasks:
-          % if task.is_photo_required:
-            % if task.is_complete:
+          % if task.is_complete:
             <div class="card">
               <div class="card-image">
                 <img src="{{task.photo_url}}">
@@ -39,20 +38,33 @@
               </div>
               % end
             </div>
-            % else:
+          % else:
             <div class="card {{'red darken-2' if task.is_rejected else 'blue-grey darken-1'}}">
-              <div class="card-content white-text">
-                <span class="card-title">
-                  Ты
-                  % if task.partner:
-                  и {{task.partner.name}}
-                  % end
-                </span>
-                <p>{{task.description}}</p>
-                % if task.is_rejected:
-                <p>Модератор отклонил эту фотографию, потому что она не соответствует заданию.</p>
+
+              <div class="valign-wrapper">
+              % if task.partner:
+
+                <div class="col s4">
+                  <a class="magnific-link" href="{{task.partner.photo_url}}">
+                    <img class="responsive-img" style="margin-bottom: 10px; margin-top:10px" src="{{task.partner.photo_url}}">
+                  </a>
+                </div>
+
                 % end
+                <div class="col s8 white-text">
+                  <span class="card-title">
+                    Ты
+                    % if task.partner:
+                    и {{task.partner.name}}
+                    % end
+                  </span>
+                  <p>{{task.description}}</p>
+                  % if task.is_rejected:
+                  <p>Модератор отклонил эту фотографию, потому что она не соответствует заданию.</p>
+                  % end
+                </div>
               </div>
+
               <div class="card-action valign-wrapper">
                 <form action="/user/upload_photo" method="POST" enctype="multipart/form-data" class="no-margin">
                   <input type="hidden" name="task_id" value="{{task.id}}">
@@ -63,7 +75,6 @@
                 </form>
               </div>
             </div>
-            % end
           % end
         % end
         </div>

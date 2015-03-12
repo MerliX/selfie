@@ -7,6 +7,8 @@ $(function() {
 
     $(".button-collapse").sideNav();
 
+    $('.magnific-link').magnificPopup({ type: 'image', closeOnContentClick: true });
+
     $(".requirement-row").click(function() {
         $("#editmodal").find("label[for=edit_requirement_description]").addClass("active");
         $("#editmodal").find("#edit_requirement_description").attr("value", $(this).children(".requirement-description").text());
