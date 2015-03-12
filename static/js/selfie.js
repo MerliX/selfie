@@ -7,7 +7,7 @@ $(function() {
 
     $(".button-collapse").sideNav();
 
-    $('.magnific-link').magnificPopup({ type: 'image', closeOnContentClick: true });
+    $('.magnific-link').magnificPopup({ type: 'image', closeOnContentClick: true, fixedContentPos: true });
 
     $(".requirement-row").click(function() {
         $("#editmodal").find("label[for=edit_requirement_description]").addClass("active");
