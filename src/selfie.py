@@ -26,12 +26,12 @@ def _close_db():
 @get('/')
 def main():
     access_code = request.get_cookie('access_code')
-   
+
     if access_code is None:
         return login()
     if access_code == MODERATOR_ACCESS_CODE:
         redirect('/moderator/feed')
-   
+
     try:
         User.get(User.access_code == access_code)
     except User.DoesNotExist:
@@ -129,7 +129,7 @@ def do_add_user():
             )
             task.save()
         redirect(
-            '/moderator/users?created_name=%s&created_access_code=%s' % 
+            '/moderator/users?created_name=%s&created_access_code=%s' %
             (user_name.decode('utf-8'), user.access_code)
         )
     else:
@@ -291,7 +291,7 @@ def do_upload_photo(user):
     try:
         task = Task.get(
             Task.id == request.forms.get('task_id'),
-            Task.is_photo_required == True, 
+            Task.is_photo_required == True,
             Task.is_complete == False
         )
         if task.assignee == user:
