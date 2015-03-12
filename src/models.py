@@ -11,9 +11,9 @@ from settings import PHOTO_PATH, SQLITE_DB_PATH, USE_POSTGRES, POSTGRES_DB_NAME,
 
 
 if USE_POSTGRES:
-    db = PostgresqlDatabase('dbname=%s' % POSTGRES_DB_NAME)
+    db = PostgresqlDatabase(POSTGRES_DB_NAME, user='postgres')
 else:
-    db = SqliteDatabase(DB_PATH)
+    db = SqliteDatabase(SQLITE_DB_PATH)
 
 logger = logging.getLogger('peewee')
 logger.setLevel(logging.DEBUG)
