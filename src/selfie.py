@@ -5,7 +5,7 @@ from datetime import datetime
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook, static_file, route
 from models import User, Task, Requirement, db
-from settings import HOST, PORT, DEBUG, PHOTO_PATH, USE_POSTGRES
+from settings import HOST, PORT, DEBUG, PHOTO_PATH, USE_POSTGRES, SERVER
 
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
@@ -361,20 +361,11 @@ def slideshow():
     }
 
 
-
-if DEBUG:
-    run(
-        host=HOST,
-        port=PORT,
-        debug=DEBUG,
-        reloader=DEBUG
-    )
-else:
-    run(
-        server='gunicorn',
-        workers=4,
-        host=HOST,
-        port=PORT,
-        debug=DEBUG,
-        reloader=DEBUG
-    )
+run(
+    server=SERVER,
+    workers=4,
+    host=HOST,
+    port=PORT,
+    debug=DEBUG,
+    reloader=DEBUG
+)

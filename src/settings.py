@@ -6,6 +6,8 @@ SQLITE_DB_PATH = '/opt/selfie-dump/base.db'
 POSTGRES_DB_NAME = 'root'
 USE_POSTGRES = True
 
+SERVER='gunicorn'
+
 HOST = 'localhost'
 PORT = 8080
 DEBUG = True
