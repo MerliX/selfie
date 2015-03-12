@@ -352,4 +352,5 @@ def slideshow():
                  )
     }
 
-run(host=HOST, port=PORT, debug=DEBUG, reloader=DEBUG)
+
+run(server='gunicorn', host=HOST, port=PORT, debug=DEBUG, reloader=DEBUG)
