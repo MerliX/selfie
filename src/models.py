@@ -136,20 +136,22 @@ class Task(Model):
 
         try:
             while difficulty_left > 0:
+
+                condition = (Requirement.is_basic == (basic_requirement is None)) & (Requirement.difficulty <= difficulty_left)
+
+                if len(exclude_requirements) > 0:
+                    condition = condition & ~(Requirement.id << exclude_requirements)
+
                 requirement = (Requirement
                     .select()
-                    .where(
-                        (Requirement.is_basic == (basic_requirement is None))
-                        & (Requirement.difficulty <= difficulty_left)
-                        & ~(Requirement.id << exclude_requirements)
-                        & ~(Requirement.id << used_requirements)
-                    )
+                    .where(condition)
                     .order_by(fn.Random())
                     .get()
                 )
 
                 difficulty_left -= requirement.difficulty
                 used_requirements.append(requirement)
+                exclude_requirements.append(requirement)
                 if basic_requirement is None:
                     basic_requirement = requirement
         except Requirement.DoesNotExist:
