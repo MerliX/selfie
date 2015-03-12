@@ -6,10 +6,15 @@ import random
 from uuid import uuid4
 from itertools import chain
 from peewee import SqliteDatabase, Model, TextField, IntegerField, BooleanField, CharField, fn, \
-                   ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER
-from settings import PHOTO_PATH, DB_PATH, SELFIE_REWARD
+                   ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER, PostgresqlDatabase
+from settings import PHOTO_PATH, SQLITE_DB_PATH, USE_POSTGRES, POSTGRES_DB_NAME, SELFIE_REWARD
 
-db = SqliteDatabase(DB_PATH)
+
+if USE_POSTGRES:
+    db = PostgresqlDatabase('dbname=%s' % POSTGRES_DB_NAME)
+else:
+    db = SqliteDatabase(DB_PATH)
+
 logger = logging.getLogger('peewee')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-PHOTO_PATH = '/opt/selfie/selfies/'
-DB_PATH = '/opt/selfie/base.db'
+PHOTO_PATH = '/opt/selfie-dump/selfies/'
+
+SQLITE_DB_PATH = '/opt/selfie-dump/base.db'
+POSTGRES_DB_NAME = 'selfie-dump'
+USE_POSTGRES = True
+
 HOST = 'localhost'
 PORT = 8080
 DEBUG = True

@@ -5,7 +5,7 @@ from datetime import datetime
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook
 from models import User, Task, Requirement, db
-from settings import HOST, PORT, DEBUG
+from settings import HOST, PORT, DEBUG, USE_POSTGRES
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
 
@@ -13,7 +13,8 @@ MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
 @hook('before_request')
 def _connect_db():
     db.connect()
-    db.execute_sql('PRAGMA foreign_keys=1')
+    if not USE_POSTGRES:
+        db.execute_sql('PRAGMA foreign_keys=1')
 
 
 @hook('after_request')
