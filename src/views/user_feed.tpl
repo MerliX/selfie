@@ -46,7 +46,9 @@
 
                 <div class="col s4">
                   <a class="magnific-link" href="{{task.partner.photo_url}}">
-                    <img class="responsive-img" style="margin-bottom: 10px; margin-top:10px" src="{{task.partner.photo_url}}">
+                    <img class="responsive-img"
+                         style="margin-bottom: 10px; margin-top:10px; border-radius: 3px; -moz-border-radius: 3px; -khtml-border-radius: 3px; -webkit-border-radius: 3px;"
+                         src="{{task.partner.photo_url}}">
                   </a>
                 </div>
 

@@ -361,11 +361,20 @@ def slideshow():
     }
 
 
-run(
-    server='gunicorn',
-    workers=4,
-    host=HOST,
-    port=PORT,
-    debug=DEBUG,
-    reloader=DEBUG
-)
+
+if DEBUG:
+    run(
+        host=HOST,
+        port=PORT,
+        debug=DEBUG,
+        reloader=DEBUG
+    )
+else:
+    run(
+        server='gunicorn',
+        workers=4,
+        host=HOST,
+        port=PORT,
+        debug=DEBUG,
+        reloader=DEBUG
+    )
