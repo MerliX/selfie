@@ -5,7 +5,7 @@ from datetime import datetime
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook, static_file, route
 from models import User, Task, Requirement, db
-from settings import HOST, PORT, DEBUG, PHOTO_PATH, USE_POSTGRES, SERVER
+from settings import HOST, PORT, DEBUG, PHOTO_PATH, USE_POSTGRES, SERVER, WORKERS
 
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
@@ -370,7 +370,7 @@ def slideshow():
 
 run(
     server=SERVER,
-    workers=4,
+    workers=WORKERS,
     host=HOST,
     port=PORT,
     debug=DEBUG,

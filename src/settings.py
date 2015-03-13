@@ -9,6 +9,7 @@ POSTGRES_HOST = 'db.selfie-dump.ru'
 USE_POSTGRES = True
 
 SERVER = 'gunicorn'
+WORKERS = 9
 
 HOST = 'localhost'
 PORT = 8080
