@@ -1,9 +1,7 @@
 from src.models import db, User, Requirement, Task
 
 
-
 def recreate_database():
-
     db.connect()
 
     try:
@@ -16,4 +14,5 @@ def recreate_database():
     db.close()
 
 
-recreate_database()
+if __name__ == "__main__":
+	recreate_database()
