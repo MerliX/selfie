@@ -30,6 +30,17 @@ class Requirement(Model):
     difficulty = IntegerField()
     is_basic = BooleanField(default=True)
 
+    @staticmethod
+    def add(requirement_description, requirement_difficulty, requirement_is_basic):
+        if requirement_description and requirement_difficulty:
+            return Requirement(
+                description=requirement_description,
+                difficulty=requirement_difficulty,
+                is_basic=requirement_is_basic
+            ).save()
+        else:
+            return None
+
     class Meta(object):
         database = db
 
@@ -38,6 +49,7 @@ class User(Model):
     name = CharField(unique=True)
     access_code = CharField(unique=True)
     score = IntegerField(default=0)
+    is_active = BooleanField(default=False)
 
     @property
     def needs_more_selfie_tasks(self):
@@ -74,6 +86,24 @@ class User(Model):
             return '/selfies/unknown.jpg'
         return first_selfie.photo_url
 
+    @staticmethod
+    def add(user_name):
+        try:
+            user = User.get(User.name == user_name)
+        except User.DoesNotExist:
+            user = User(
+                name=user_name
+            )
+            user.generate_access_code()
+            user.save()
+            task = Task(
+                assignee=user,
+                description=u'Сделай селфи с любимым предметом, чтобы хорошо было видно лицо.',
+                difficulty=0
+            )
+            task.save()
+        return user
+
     def generate_access_code(self):
         self.access_code = ''.join(
             chain(*zip(
@@ -108,6 +138,8 @@ class Task(Model):
 
     def find_partner(self):
         try:
+            u = User().select().where(User.is_active == True).get()
+
             self.partner = (User
                 .select(User.id)
                 .join(Task, JOIN_LEFT_OUTER, Task.partner)
@@ -120,6 +152,7 @@ class Task(Model):
                                      )
                     )
                     & (User.id != self.assignee.id)
+                    & (User.is_active == True)
                 )
                 .group_by(User.id)
                 .order_by(fn.Count(Task.id), fn.Random())
@@ -133,7 +166,7 @@ class Task(Model):
         basic_requirement = None
         used_requirements = []
         exclude_requirements = [
-            r.basic_requirement 
+            r.basic_requirement
             for r in self.assignee.tasks.where(~(Task.basic_requirement >> None))
         ] + [
             r.basic_requirement

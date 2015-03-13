@@ -93,7 +93,12 @@ def do_approve_task():
             task.is_rejected = False
             task.approved_time = datetime.utcnow()
             task.save()
-            User.update(score=User.score + task.reward).where(User.id == task.assignee).execute()
+
+            user = User.select().where(User.id == task.assignee).get()
+            user.score = user.score + task.reward
+            user.is_active = True
+            user.save()
+
             if task.partner:
                 (User
                     .update(score=User.score + task.reward / 2)
@@ -124,20 +129,7 @@ def moderator_users():
 def do_add_user():
     user_name = request.forms.get('add_user_name')
     if user_name:
-        try:
-            user = User.get(User.name == user_name)
-        except User.DoesNotExist:
-            user = User(
-                name=user_name
-            )
-            user.generate_access_code()
-            user.save()
-            task = Task(
-                assignee=user,
-                description=u'Сделай селфи с любимым предметом, чтобы хорошо было видно лицо.',
-                difficulty=0
-            )
-            task.save()
+        user = User.add(user_name)
         redirect(
             '/moderator/users?created_name=%s&created_access_code=%s' %
             (user_name.decode('utf-8'), user.access_code)
@@ -163,19 +155,14 @@ def moderator_requirements():
 @post('/moderator/add_requirement')
 @check_moderator
 def do_add_requirement():
-    requirement_description = request.forms.get('add_requirement_description')
-    requirement_difficulty = request.forms.get('add_requirement_difficulty')
-    requirement_is_basic = bool(request.forms.get('add_requirement_is_basic'))
-    if requirement_description and requirement_difficulty:
-        Requirement(
-            description=requirement_description, 
-            difficulty=requirement_difficulty,
-            is_basic=requirement_is_basic
-        ).save()
+    description = request.forms.get('add_requirement_description')
+    difficulty = request.forms.get('add_requirement_difficulty')
+    is_basic = bool(request.forms.get('add_requirement_is_basic'))
+    if Requirement.add(description, difficulty, is_basic):
         redirect('/moderator/requirements?created_requirement=%s&created_difficulty=%s&created_is_basic=%s' % (
-            requirement_description.decode('utf-8'), 
-            requirement_difficulty,
-            requirement_is_basic
+            description.decode('utf-8'),
+            difficulty,
+            is_basic
         ))
     else:
         redirect('/moderator/requirements')
@@ -335,7 +322,7 @@ def login(wrong_code=False):
 
 @post('/')
 def do_login():
-    access_code = request.forms.get('access_code').lower()
+    access_code = request.forms.get('access_code').lower().strip()
     if access_code:
         response.set_cookie('access_code', access_code, max_age=14 * 24 * 3600)
     redirect('/')
@@ -346,11 +333,16 @@ def do_logout():
     response.set_cookie('access_code', '')
     redirect('/')
 
+# service/test actions
+
 @get('/recreate_db')
 def do_recreate_db():
     if DEBUG:
         from recreate_db import recreate_database
         recreate_database()
+    redirect('/')
+
+
     redirect('/')
 
 
