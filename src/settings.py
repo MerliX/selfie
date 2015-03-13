@@ -3,7 +3,9 @@
 PHOTO_PATH = '/opt/selfie-dump/selfies/'
 
 SQLITE_DB_PATH = '/opt/selfie-dump/base.db'
-POSTGRES_DB_NAME = 'root'
+POSTGRES_DB_NAME = 'selfie'
+POSTGRES_USER = 'selfie'
+POSTGRES_HOST = 'db.selfie-dump.ru'
 USE_POSTGRES = True
 
 SERVER = 'gunicorn'

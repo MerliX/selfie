@@ -6,11 +6,17 @@ import random
 from itertools import chain
 from peewee import SqliteDatabase, Model, TextField, IntegerField, BooleanField, CharField, fn, \
                    ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER, PostgresqlDatabase
-from settings import PHOTO_PATH, SQLITE_DB_PATH, USE_POSTGRES, POSTGRES_DB_NAME, SELFIE_REWARD
+from settings import PHOTO_PATH, SQLITE_DB_PATH, USE_POSTGRES, POSTGRES_DB_NAME, SELFIE_REWARD, \
+                     POSTGRES_USER, POSTGRES_HOST
 
 
 if USE_POSTGRES:
-    db = PostgresqlDatabase(POSTGRES_DB_NAME, client_encoding='UTF8')
+    db = PostgresqlDatabase(
+        database=POSTGRES_DB_NAME,
+        user=POSTGRES_USER,
+        host=POSTGRES_HOST,
+        client_encoding='UTF8'
+    )
 else:
     db = SqliteDatabase(SQLITE_DB_PATH)
 
