@@ -237,7 +237,7 @@ def do_regenerate_selfie():
 def get_user(func):
     def wrapper():
         try:
-            code = request.query['user_code'] if is_moderator() else request.get_cookie('access_code')
+            code = request.query.get('user_code') if is_moderator() else request.get_cookie('access_code')
             return func(User.get(User.access_code == code))
         except User.DoesNotExist:
             redirect('/')

@@ -43,16 +43,19 @@
               <div class="card-content white-text">
 
                 % if task.partner:
+                  <div>
+                    <span class="card-title">Ты и {{task.partner.name}}</span>
+                  </div>
                   <div class="valign-wrapper">
-                    <div class="col s4">
+                    <div class="col s3">
                       <a class="magnific-link" href="{{task.partner.photo_url}}">
                         <img class="responsive-img"
                              style="border-radius: 3px; -moz-border-radius: 3px; -khtml-border-radius: 3px; -webkit-border-radius: 3px;"
                              src="{{task.partner.photo_url}}">
                       </a>
                     </div>
-                    <div class="col s8">
-                      <span class="card-title">Ты и {{task.partner.name}}</span>
+                    <div class="col s9">
+
                       <p>{{task.description}}</p>
                     </div>
                   </div>
