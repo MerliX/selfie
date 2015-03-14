@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src.models import db, User, Requirement, Task
+from models import db, User, Requirement, Task
 
 
 def recreate_database():
