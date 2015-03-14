@@ -1,4 +1,4 @@
-[ ![Codeship Status for beevee/selfie_zmsh_2015](https://codeship.com/projects/7a3ec780-7d49-0132-04d9-42f9cc6659ff/status?branch=master)](https://codeship.com/projects/56612) [![Code Health](https://landscape.io/github/beevee/selfie_zmsh_2015/master/landscape.svg)](https://landscape.io/github/beevee/selfie_zmsh_2015/master)
+[ ![Codeship Status for beevee/selfie_zmsh_2015](https://codeship.com/projects/7a3ec780-7d49-0132-04d9-42f9cc6659ff/status?branch=dump)](https://codeship.com/projects/56612) [![Code Health](https://landscape.io/github/beevee/selfie_zmsh_2015/dump/landscape.svg)](https://landscape.io/github/beevee/selfie_zmsh_2015/dump)
 
 Как запустить
 =============
