@@ -55,11 +55,14 @@ def main():
 
 def check_moderator(func):
     def wrapper():
-        if request.get_cookie('access_code') != MODERATOR_ACCESS_CODE:
-            redirect('/')
-        else:
+        if is_moderator():
             return func()
+        else:
+            redirect('/')
     return wrapper
+
+def is_moderator():
+    return request.get_cookie('access_code') == MODERATOR_ACCESS_CODE
 
 
 @get('/moderator/feed')
@@ -234,11 +237,10 @@ def do_regenerate_selfie():
 def get_user(func):
     def wrapper():
         try:
-            user = User.get(User.access_code == request.get_cookie('access_code'))
+            code = request.query['user_code'] if is_moderator() else request.get_cookie('access_code')
+            return func(User.get(User.access_code == code))
         except User.DoesNotExist:
             redirect('/')
-        else:
-            return func(user)
     return wrapper
 
 
@@ -281,6 +283,24 @@ def user_feed(user):
         'no_tasks_available': no_tasks_available
     }
 
+
+def save_photo(data, path):
+    photo = Image.open(data)
+    try:
+        orientation = photo._getexif()[274]
+    except (TypeError, AttributeError, KeyError):
+        pass
+    else:
+        if orientation in [3, 6, 8]:
+            degrees = {
+                3: 180,
+                6: -90,
+                8: -270
+            }[orientation]
+            photo = photo.rotate(degrees)
+    photo.thumbnail((1024, 1024))
+    photo.save(path)
+
 @post('/user/upload_photo')
 @get_user
 def do_upload_photo(user):
@@ -290,28 +310,13 @@ def do_upload_photo(user):
             Task.is_complete == False
         )
         if task.assignee == user:
-            photo = Image.open(request.files.get('photo_file').file)
-            try:
-                orientation = photo._getexif()[274]
-            except (TypeError, AttributeError, KeyError):
-                pass
-            else:
-                if orientation in [3, 6, 8]:
-                    degrees = {
-                        3: 180,
-                        6: -90,
-                        8: -270
-                    }[orientation]
-                    photo = photo.rotate(degrees)
-            photo.thumbnail((1024, 1024))
-            photo.save(task.photo_path)
+            save_photo(request.files.get('photo_file').file, task.photo_path)
             task.is_complete = True
             task.is_rejected = False
             task.save()
     except Task.DoesNotExist:
         pass
     redirect('/')
-
 
 # login actions
 
@@ -340,9 +345,6 @@ def do_recreate_db():
     if DEBUG:
         from recreate_db import recreate_database
         recreate_database()
-    redirect('/')
-
-
     redirect('/')
 
 

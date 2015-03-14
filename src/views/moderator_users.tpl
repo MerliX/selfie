@@ -45,7 +45,9 @@
             <tbody>
               % for user in users:
               <tr>
-                <td>{{user.name}}</td>
+                <td>
+                    <a href="/user/feed?user_code={{user.access_code}}">{{user.name}}</a>
+                </td>
                 <td>{{user.access_code}}</td>
                 <td>{{user.score}}</td>
               </tr>

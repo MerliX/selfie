@@ -68,7 +68,7 @@
               </div>
 
               <div class="card-action valign-wrapper">
-                <form action="/user/upload_photo" method="POST" enctype="multipart/form-data" class="no-margin">
+                <form action="/user/upload_photo?user_code={{user.access_code}}" method="POST" enctype="multipart/form-data" class="no-margin">
                   <input type="hidden" name="task_id" value="{{task.id}}">
                   <label class="btn waves-effect waves-light no-margin"><i class="mdi-file-cloud-upload left"></i>
                     Загрузить
