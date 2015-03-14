@@ -13,11 +13,11 @@ MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
 
 
 @route('/static/<filepath:path>')
-def server_static(filepath):
-    return static_file(filepath, root='C:/Projects/Selfie_zmsh_2015/static/')
+def static_files(filepath):
+    return static_file(filepath, root=os.path.dirname(os.path.realpath(__file__)) + '\\..\\static\\')
 
 @route('/selfies/<filepath:path>')
-def server_static(filepath):
+def static_selfies(filepath):
     return static_file(filepath, root=PHOTO_PATH)
 
 

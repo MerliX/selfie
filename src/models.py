@@ -138,8 +138,6 @@ class Task(Model):
 
     def find_partner(self):
         try:
-            u = User().select().where(User.is_active == True).get()
-
             self.partner = (User
                 .select(User.id)
                 .join(Task, JOIN_LEFT_OUTER, Task.partner)
