@@ -40,32 +40,33 @@
             </div>
           % else:
             <div class="card {{'red darken-2' if task.is_rejected else 'blue-grey darken-1'}}">
+              <div class="card-content white-text">
 
-              <div class="valign-wrapper">
-              % if task.partner:
-
-                <div class="col s4">
-                  <a class="magnific-link" href="{{task.partner.photo_url}}">
-                    <img class="responsive-img"
-                         style="margin-bottom: 10px; margin-top:10px; border-radius: 3px; -moz-border-radius: 3px; -khtml-border-radius: 3px; -webkit-border-radius: 3px;"
-                         src="{{task.partner.photo_url}}">
-                  </a>
-                </div>
-
-                % end
-                <div class="col s8 white-text">
-                  <span class="card-title">
-                    Ты
-                    % if task.partner:
-                    и {{task.partner.name}}
-                    % end
-                  </span>
+                % if task.partner:
+                  <div class="valign-wrapper">
+                    <div class="col s4">
+                      <a class="magnific-link" href="{{task.partner.photo_url}}">
+                        <img class="responsive-img"
+                             style="border-radius: 3px; -moz-border-radius: 3px; -khtml-border-radius: 3px; -webkit-border-radius: 3px;"
+                             src="{{task.partner.photo_url}}">
+                      </a>
+                    </div>
+                    <div class="col s8">
+                      <span class="card-title">Ты и {{task.partner.name}}</span>
+                      <p>{{task.description}}</p>
+                    </div>
+                  </div>
+                %else:
+                  <span class="card-title">Первое задание!</span>
                   <p>{{task.description}}</p>
-                  % if task.is_rejected:
-                  <p>Модератор отклонил эту фотографию, потому что она не соответствует заданию.</p>
-                  % end
-                </div>
+                %end
               </div>
+
+              % if task.is_rejected:
+                <div class="card-content white-text">
+                  <p>Модератор отклонил фотографию, потому что она не соответствует заданию.</p>
+                </div>
+              % end
 
               <div class="card-action valign-wrapper">
                 <form action="/user/upload_photo?user_code={{user.access_code}}" method="POST" enctype="multipart/form-data" class="no-margin">
