@@ -237,11 +237,25 @@ def do_regenerate_selfie():
 def get_user(func):
     def wrapper():
         try:
-            code = request.query.get('user_code') if is_moderator() else request.get_cookie('access_code')
-            return func(User.get(User.access_code == code))
+            if is_moderator():
+                user = User.get(User.id == request.query.get('user'))
+            else:
+                user = User.get(User.access_code == request.get_cookie('access_code'))
+            return func(user)
         except User.DoesNotExist:
             redirect('/')
     return wrapper
+
+def get_current_user():
+    try:
+            if is_moderator():
+                user = User.get(User.id == request.query.get('user'))
+            else:
+                user = User.get(User.access_code == request.get_cookie('access_code'))
+
+            return func(user)
+    except User.DoesNotExist:
+        return None;
 
 
 @get('/user/allfeeds')
@@ -302,14 +316,13 @@ def save_photo(data, path):
     photo.save(path)
 
 @post('/user/upload_photo')
-@get_user
-def do_upload_photo(user):
+def do_upload_photo():
     try:
         task = Task.get(
             Task.id == request.forms.get('task_id'),
             Task.is_complete == False
         )
-        if task.assignee == user:
+        if is_moderator() | (task.assignee.access_code == request.get_cookie('access_code')):
             save_photo(request.files.get('photo_file').file, task.photo_path)
             task.is_complete = True
             task.is_rejected = False
