@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="/static/css/materialize.min.css" media="screen,projection">
     <link type="text/css" rel="stylesheet" href="/static/css/selfie.css" media="screen,projection"/>
-    <link type="text/css" rel="stylesheet" href="/static/css/magnific.css">
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
