@@ -49,6 +49,7 @@ class User(Model):
     name = CharField(unique=True)
     access_code = CharField(unique=True)
     score = IntegerField(default=0)
+    company = CharField(default='')
     is_active = BooleanField(default=False)
 
     @property
@@ -87,18 +88,19 @@ class User(Model):
         return first_selfie.photo_url
 
     @staticmethod
-    def add(user_name):
+    def add(user_name, user_company):
         try:
             user = User.get(User.name == user_name)
         except User.DoesNotExist:
             user = User(
-                name=user_name
+                name=user_name,
+                company=user_company
             )
             user.generate_access_code()
             user.save()
             task = Task(
                 assignee=user,
-                description=u'Сделай селфи с любимым предметом, чтобы хорошо было видно лицо.',
+                description=u'Сделай селфи, чтобы хорошо было видно лицо.',
                 difficulty=0
             )
             task.save()

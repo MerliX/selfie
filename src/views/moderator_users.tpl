@@ -22,6 +22,10 @@
               <input id="add_user_name" name="add_user_name" type="text">
               <label for="add_user_name">Имя пользователя</label> 
             </div>
+            <div class="input-field col s12 m6 l8">
+              <input id="add_user_company" name="add_user_company" type="text">
+              <label for="add_user_name">Компания</label>
+            </div>
             <div class="col s12 m6 l4">
               <button class="btn waves-effect waves-light" type="submit"><i class="mdi-social-person-add left"></i>
                 Добавить
@@ -37,6 +41,7 @@
             <thead>
               <tr>
                 <th>Имя</th>
+                <th>Компания</th>
                 <th>Код доступа</th>
                 <th>Баллы</th>
               </tr>
@@ -48,6 +53,7 @@
                 <td>
                     <a href="/user/feed?user={{user.id}}">{{user.name}}</a>
                 </td>
+                <td>{{user.company}}</td>
                 <td>{{user.access_code}}</td>
                 <td>{{user.score}}</td>
               </tr>

@@ -49,7 +49,7 @@
 
                 <div class="card-image">
                     <img src="{{task.partner.photo_url}}">
-                    <span class="card-title"> Ты и {{task.partner.name}}, СКБ Контур</span>
+                    <span class="card-title"> Ты и {{task.partner.name}}, {{task.partner.company}}</span>
                 </div>
                 <div class="card-content white-text">
                     <p>{{task.description}}</p>
