@@ -247,17 +247,6 @@ def get_user(func):
             redirect('/')
     return wrapper
 
-def get_current_user():
-    try:
-            if is_moderator():
-                user = User.get(User.id == request.query.get('user'))
-            else:
-                user = User.get(User.access_code == request.get_cookie('access_code'))
-
-            return func(user)
-    except User.DoesNotExist:
-        return None;
-
 
 @get('/user/allfeeds')
 @view('user_allfeeds')
@@ -347,10 +336,17 @@ def do_login():
     redirect('/')
 
 
+@route('/go/<access_code>')
+@view('go')
+def go(access_code):
+    return {'code': access_code}
+
+
 @get('/logout')
 def do_logout():
     response.set_cookie('access_code', '')
     redirect('/')
+
 
 # service/test actions
 
