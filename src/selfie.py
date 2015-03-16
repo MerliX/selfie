@@ -321,6 +321,10 @@ def do_upload_photo():
         pass
     redirect('/')
 
+@get('/user/upload_photo')
+def upload_photo_get():
+    redirect('/') # workaround to prevent error when upload is failed
+
 # login actions
 
 @view('login')
