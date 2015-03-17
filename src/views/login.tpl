@@ -4,7 +4,7 @@
   <nav>
     <div class="container">
       <div class="nav-wrapper">
-        <a href="/" class="brand-logo">Себяшки</a>
+        <a href="/" class="brand-logo">#селфидамп</a>
       </div>
     </div>
   </nav>
@@ -17,7 +17,7 @@
       <div class="row">
         <div class="col s12">
           <blockquote>
-            Похоже, у тебя неправильный код. Попробуй ввести еще раз или обратись к организаторам.
+            Похоже, у тебя неправильный код. Попробуй ввести еще раз или обратись к организаторам на стенд JetStyle.
           </blockquote>
         </div>
       </div>
