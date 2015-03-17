@@ -73,8 +73,7 @@ class User(Model):
         return (self
             .tasks
             .select(fn.Max(Task.difficulty))
-            .scalar()
-        )
+            .scalar())
 
     @property
     def photo_url(self):
@@ -149,8 +148,7 @@ class Task(Model):
                                      .select(Task.partner)
                                      .where(
                                         ~(Task.partner >> None)
-                                     )
-                    )
+                                     ))
                     & (User.id != self.assignee.id)
                     & (User.is_active == True)
                 )
@@ -199,7 +197,6 @@ class Task(Model):
         if used_requirements:
             self.description = ' '.join([r.description for r in used_requirements])
             self.basic_requirement = basic_requirement
-
 
     def delete_photo(self):
         os.remove(self.photo_path)

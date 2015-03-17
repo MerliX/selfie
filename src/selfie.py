@@ -11,10 +11,10 @@ from settings import HOST, PORT, DEBUG, PHOTO_PATH, USE_POSTGRES, SERVER, WORKER
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
 
 
-
 @route('/static/<filepath:path>')
 def static_files(filepath):
     return static_file(filepath, root=os.path.dirname(os.path.realpath(__file__)) + '\\..\\static\\')
+
 
 @route('/selfies/<filepath:path>')
 def static_selfies(filepath):
@@ -61,6 +61,7 @@ def check_moderator(func):
             redirect('/')
     return wrapper
 
+
 def is_moderator():
     return request.get_cookie('access_code') == MODERATOR_ACCESS_CODE
 
@@ -106,8 +107,7 @@ def do_approve_task():
                 (User
                     .update(score=User.score + task.reward / 2)
                     .where(User.id == task.partner)
-                    .execute()
-                )
+                    .execute())
         elif request.forms.get('decision') == 'reject':
             task.delete_photo()
             task.is_complete = False
@@ -305,6 +305,7 @@ def save_photo(data, path):
     photo.thumbnail((1024, 1024))
     photo.save(path)
 
+
 @post('/user/upload_photo')
 def do_upload_photo():
     try:
@@ -321,11 +322,13 @@ def do_upload_photo():
         pass
     redirect('/')
 
+
 @get('/user/upload_photo')
 def upload_photo_get():
-    redirect('/') # workaround to prevent error when upload is failed
+    redirect('/')  # workaround to prevent error when upload is failed
 
 # login actions
+
 
 @view('login')
 def login(wrong_code=False):
