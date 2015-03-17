@@ -150,6 +150,12 @@ class Task(Model):
     def photo_url(self):
         return '/selfies/%s.jpg' % self.id
 
+    def get_participants_for_user(self, user):
+        result = u'Ты' if self.assignee == user else self.assignee.name
+        if (self.partner):
+            result = result + u' и ' + (u'Ты' if self.partner == user else self.partner.name)
+        return result
+
     def find_partner(self):
         try:
             self.partner = (User

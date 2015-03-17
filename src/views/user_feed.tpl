@@ -17,37 +17,31 @@
                     % end
 
                     % for task in active_tasks:
-                        <div class="card {{'red darken-2' if task.is_rejected else 'blue-grey darken-1'}}">
 
-                            % if task.partner:
-                                <div class="card-image">
-                                    <img src="{{task.partner.photo_url}}">
-                                    <span class="card-title"> Ты и {{task.partner.name}}, {{task.partner.company}}</span>
-                                </div>
-                                <div class="card-content white-text">
-                                    <p>{{task.description}}</p>
-                                </div>
-                            %else:
-                                <div class="card-content white-text">
-                                    <span class="card-title">Первое задание!</span>
-                                    <p>{{task.description}}</p>
-                                </div>
-                            %end
+                        % if not task.is_complete:
 
-                            % if task.is_rejected:
-                                <div class="card-content white-text">
-                                    <p>Модератор отклонил фотографию, потому что она не соответствует заданию.</p>
-                                </div>
-                            % end
+                            <div class="card {{'red darken-2' if task.is_rejected else 'blue-grey darken-1'}}">
+                                % if task.partner:
+                                    <div class="card-image">
+                                        <img src="{{task.partner.photo_url}}">
+                                        <span class="card-title">{{task.get_participants_for_user(user)}}</span>
+                                    </div>
+                                    <div class="card-content white-text">
+                                        <p>{{task.description}}</p>
+                                    </div>
+                                %else:
+                                    <div class="card-content white-text">
+                                        <span class="card-title">Первое задание!</span>
+                                        <p>{{task.description}}</p>
+                                    </div>
+                                %end
 
-                            % if task.is_complete:
-                                <div class="card-action valign-wrapper">
-                                    <a href="/" class="btn orange darken-2 white-text no-margin">
-                                        <i class="mdi-action-schedule left"></i>
-                                        Проверяем
-                                    </a>
-                                </div>
-                            %else:
+                                % if task.is_rejected:
+                                    <div class="card-content white-text">
+                                        <p>Модератор отклонил фотографию, потому что она не соответствует заданию. Попробуте ещё раз.</p>
+                                    </div>
+                                % end
+
                                 <div class="card-action valign-wrapper">
                                     <form action="/user/upload_photo" method="POST" enctype="multipart/form-data" class="no-margin">
                                         <input type="hidden" name="task_id" value="{{task.id}}">
@@ -58,30 +52,34 @@
                                         </label>
                                     </form>
                                 </div>
-                            % end
-                        </div>
+                            </div>
+
+                        % else:
+
+                            <div class="card blue-grey darken-1">
+                                <div class="card-image">
+                                    <img src="{{task.photo_url}}">
+                                    <span class="card-title">{{task.get_participants_for_user(user)}}</span>
+                                </div>
+                                <div class="card-content white-text">
+                                    <p>{{task.description}}</p>
+                                </div>
+                                <div class="card-action valign-wrapper">
+                                    <a href="/" class="btn orange darken-2 white-text no-margin">
+                                        <i class="mdi-action-schedule left"></i>
+                                        Проверяем
+                                    </a>
+                                </div>
+                            </div>
+
+                        % end
                     % end
 
                     % for task in approved_tasks:
                         <div class="card">
                             <div class="card-image">
                                 <img src="{{task.photo_url}}">
-                                <span class="card-title">
-                                    % if task.assignee == user:
-                                        Ты
-                                    % else:
-                                        {{task.assignee.name}}
-                                    % end
-
-                                    % if task.partner:
-                                        и
-                                        % if task.partner == user:
-                                            ты
-                                        % else:
-                                            {{task.partner.name}}
-                                        % end
-                                    % end
-                                </span>
+                                <span class="card-title">{{task.get_participants_for_user(user)}}</span>
                             </div>
                             <div class="card-content">
                                 <p>{{task.description}}</p>
