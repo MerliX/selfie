@@ -265,26 +265,22 @@ def user_allfeeds():
 @view('user_feed')
 @get_user
 def user_feed(user):
-    no_tasks_available = False
-    while user.needs_more_selfie_tasks:
-        selfie = Task(assignee=user, difficulty=user.current_difficulty + 1)
-
-        selfie.find_partner()
-        if selfie.partner is None:
-            no_tasks_available = True
-            break
-
-        selfie.generate_description()
-        if selfie.description is None:
-            no_tasks_available = True
-            break
-
-        selfie.save()
-
+    generated = user.ensure_tasks_generated()
+    approved = (Task
+        .select()
+        .where(((Task.partner == user) | (Task.assignee == user)) & (Task.is_approved == True))
+        .order_by(Task.approved_time.desc())
+    )
+    active = (user.tasks
+         .select()
+         .where(Task.is_approved == False)
+         .order_by(Task.is_complete, Task.difficulty.desc())
+    )
     return {
         'user': user,
-        'tasks': user.tasks.order_by(Task.is_complete, Task.is_approved, Task.approved_time.desc(), Task.difficulty.desc()),
-        'no_tasks_available': no_tasks_available
+        'active_tasks': active,
+        'approved_tasks': approved,
+        'generated': generated
     }
 
 

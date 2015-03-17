@@ -86,6 +86,19 @@ class User(Model):
             return '/selfies/unknown.jpg'
         return first_selfie.photo_url
 
+    def ensure_tasks_generated(self):
+        while self.needs_more_selfie_tasks:
+            selfie = Task(assignee=self, difficulty=self.current_difficulty + 1)
+            selfie.find_partner()
+            if selfie.partner is None:
+                return False
+            selfie.generate_description()
+            if selfie.description is None:
+                return False
+            selfie.save()
+        return True
+
+
     @staticmethod
     def add(user_name, user_company):
         try:
