@@ -29,7 +29,6 @@ def recreate_database():
     Requirement.add('Вы чините баг.', 2, False)
     Requirement.add('Вокруг вас 5 девушек.', 3, False)
 
-
     User.add('Александр Абрамович', '')
     User.add('Борис Бурда', 'Яндекс')
     User.add('Василий Венедиктов', 'JetStyle')
@@ -39,4 +38,4 @@ def recreate_database():
 
 
 if __name__ == '__main__':
-	recreate_database()
+    recreate_database()
