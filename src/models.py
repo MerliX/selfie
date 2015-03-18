@@ -44,7 +44,6 @@ class Requirement(Model):
     class Meta(object):
         database = db
 
-
 class User(Model):
     name = CharField(unique=True)
     access_code = CharField(unique=True)
@@ -129,7 +128,6 @@ class User(Model):
     class Meta(object):
         database = db
 
-
 class Task(Model):
     assignee = ForeignKeyField(User, related_name='tasks', on_delete='CASCADE')
     partner = ForeignKeyField(User, related_name='mentions', null=True, on_delete='CASCADE')
@@ -140,7 +138,6 @@ class Task(Model):
     description = TextField(null=True)
     reward = IntegerField(default=SELFIE_REWARD)
     difficulty = IntegerField()
-    basic_requirement = ForeignKeyField(Requirement, null=True, on_delete='SET NULL')
 
     @property
     def photo_path(self):
@@ -169,7 +166,7 @@ class Task(Model):
                                         ~(Task.partner >> None)
                                      ))
                     & (User.id != self.assignee.id)
-                    & (User.is_active == True)
+                & (User.is_active == True)
                 )
                 .group_by(User.id)
                 .order_by(fn.Count(Task.id), fn.Random())
@@ -180,45 +177,54 @@ class Task(Model):
 
     def generate_description(self):
         difficulty_left = self.difficulty
-        basic_requirement = None
         used_requirements = []
-        exclude_requirements = [
-            r.basic_requirement
-            for r in self.assignee.tasks.where(~(Task.basic_requirement >> None))
-        ] + [
-            r.basic_requirement
-            for r in self.assignee.mentions.where(~(Task.basic_requirement >> None))
-        ]
+        found_basic = False
 
         try:
             while difficulty_left > 0:
 
-                condition = (Requirement.is_basic == (basic_requirement is None)) & (Requirement.difficulty <= difficulty_left)
+                condition = (Requirement.difficulty <= difficulty_left) \
+                    & (Requirement.difficulty > difficulty_left / 3)
 
-                if len(exclude_requirements) > 0:
-                    condition = condition & ~(Requirement.id << exclude_requirements)
+                if found_basic:
+                    condition = condition & (Requirement.is_basic == False)
+
+                if len(used_requirements) > 0:
+                    condition = condition & ~(Requirement.id << used_requirements)
 
                 requirement = (Requirement
                     .select()
                     .where(condition)
-                    .order_by(fn.Random())
+                    .order_by(
+                        RequirementUsage
+                            .select(fn.count(RequirementUsage.id))
+                            .where((RequirementUsage.user == self.assignee) & (RequirementUsage.requirement == Requirement.id)),
+                        fn.Random())
                     .get()
                 )
 
                 difficulty_left -= requirement.difficulty
                 used_requirements.append(requirement)
-                exclude_requirements.append(requirement)
-                if basic_requirement is None:
-                    basic_requirement = requirement
-        except Requirement.DoesNotExist:
-            pass
+                if requirement.is_basic:
+                    found_basic = True
 
-        if used_requirements:
-            self.description = ' '.join([r.description for r in used_requirements])
-            self.basic_requirement = basic_requirement
+        except Requirement.DoesNotExist:
+            return
+
+        self.description = ' '.join([r.description for r in sorted(used_requirements, key=lambda req: -req.is_basic)])
+
+        for req in used_requirements:
+            RequirementUsage(user=self.assignee, requirement = req).save()
 
     def delete_photo(self):
         os.remove(self.photo_path)
+
+    class Meta(object):
+        database = db
+
+class RequirementUsage(Model):
+    user = ForeignKeyField(User, null=False, index=True, on_delete='CASCADE')
+    requirement = ForeignKeyField(Requirement, null=False, index=True, on_delete='CASCADE')
 
     class Meta(object):
         database = db

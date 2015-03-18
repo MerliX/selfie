@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from models import db, User, Requirement, Task
+from models import db, User, Requirement, Task, RequirementUsage
 
 
 def recreate_database():
     db.connect()
 
-    try:
-        db.drop_tables([User, Requirement, Task])
-    except:
-        db.rollback()
+    for table in [RequirementUsage, Task, User, Requirement]:
+        try:
+            db.drop_table(table)
+        except:
+            db.rollback()
 
-    db.create_tables([User, Requirement, Task])
+    db.create_tables([User, Requirement, Task, RequirementUsage])
 
     Requirement.add('Вы у входа.', 1, True)
     Requirement.add('Вы у сцены.', 1, True)
@@ -29,10 +30,37 @@ def recreate_database():
     Requirement.add('Вы чините баг.', 2, False)
     Requirement.add('Вокруг вас 5 девушек.', 3, False)
 
+    # Requirement.add('Основное 1а', 1, True)
+    # Requirement.add('Основное 1b', 1, True)
+    # Requirement.add('Основное 2а', 2, True)
+    # Requirement.add('Основное 2b', 2, True)
+    # Requirement.add('Основное 3а', 3, True)
+    # Requirement.add('Основное 3b', 3, True)
+    # Requirement.add('Основное 4а', 4, True)
+    # Requirement.add('Основное 4b', 4, True)
+    #
+    # Requirement.add('Доп 1а', 1, False)
+    # Requirement.add('Доп 1b', 1, False)
+    # Requirement.add('Доп 1c', 1, False)
+    # Requirement.add('Доп 2а', 2, False)
+    # Requirement.add('Доп 2b', 2, False)
+    # Requirement.add('Доп 2c', 2, False)
+    # Requirement.add('Доп 3а', 3, False)
+    # Requirement.add('Доп 3b', 3, False)
+    # Requirement.add('Доп 3c', 3, False)
+    # Requirement.add('Доп 4а', 4, False)
+    # Requirement.add('Доп 4b', 4, False)
+    # Requirement.add('Доп 4c', 4, False)
+
     User.add('Александр Абрамович', '')
     User.add('Борис Бурда', 'Яндекс')
     User.add('Василий Венедиктов', 'JetStyle')
     User.add('Дмитрий Дыров', 'СКБ Контур')
+    User.add('Валерий Порча', 'Наумен')
+    User.add('Николая Комаров', 'Наумен')
+    User.add('Елена Куравлёва', 'Экстенсив')
+    User.add('Иван Водопьянов', 'Предприниматель')
+    User.add('Илья Мурманский', 'Сбербанк')
 
     db.close()
 
