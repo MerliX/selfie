@@ -6,6 +6,10 @@ body
 nav
 {
     background-color: ff215e;
+}
+
+.user-nav
+{
     background-image: url("/static/images/logo_selfiedump_header.png");
     background-repeat: no-repeat;
     background-position: right;
@@ -36,6 +40,11 @@ label input[type=file] {
 
 .used-coupon {
     text-decoration: line-through;
+}
+
+.user-score
+{
+    text-align: left;
 }
 
 .achievement-reward {
