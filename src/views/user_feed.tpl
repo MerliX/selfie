@@ -73,6 +73,10 @@
                             </div>
 
                         % end
+
+                        % if task.id == active_tasks[0].id:
+                            <img src="/images/jet-logo.svg" width="106" height="37">
+                        % end
                     % end
 
                     % for task in approved_tasks:
