@@ -371,7 +371,6 @@ def slideshow():
                  .select()
                  .where(
                     (Task.is_approved == True)
-                    & (Task.difficulty > 0)
                  )
                  .order_by(Task.approved_time.desc())
                  .limit(30)
