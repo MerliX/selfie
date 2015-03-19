@@ -4,6 +4,11 @@
  * @link https://github.com/ZeroOneStudio/kenburnsy
  * @license MIT
  */
+
+body {
+  background-image: url("/static/images/background.gif");
+}
+
 .kenburnsy {
   position: relative;
   overflow: hidden;
@@ -32,7 +37,6 @@
   background-position: center center;
   -webkit-background-size: contain;
           background-size: contain;
-  background-color: black;
   background-repeat: no-repeat;
   -webkit-transform: translateZ(0);
           transform: translateZ(0);
