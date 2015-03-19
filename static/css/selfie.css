@@ -1,6 +1,7 @@
-.user-nav
+.nav-wrapper
 {
-    background-image: url("/static/images/logo_selfiedump_header.png");
+    background-image: url("/static/images/header-logo.svg");
+    background-size: 173px 42px;
     background-repeat: no-repeat;
     background-position: right;
 }
@@ -12,4 +13,12 @@
 label input[type=file] {
     position: fixed;
     top: -1000px;
+}
+
+.jet-logo {
+	width: 106px;
+	height: 37px;
+	position: relative;
+	left: 50%;
+	margin-left: -53px;
 }
