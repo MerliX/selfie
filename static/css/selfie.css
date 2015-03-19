@@ -20,4 +20,5 @@ label input[type=file] {
 	height: 37px;
 	position: relative;
 	left: 50%;
+	margin-left: -53px;
 }
