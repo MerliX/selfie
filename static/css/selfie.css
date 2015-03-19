@@ -3,10 +3,6 @@ body
     background-image: url("/static/images/background.gif");
 }
 
-nav
-{
-    background-color: ff215e;
-}
 
 .user-nav
 {
