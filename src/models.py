@@ -164,20 +164,18 @@ class Task(Model):
                     ~(User.id << self.assignee
                                      .tasks
                                      .select(Task.partner)
-                                     .where(
-                                        ~(Task.partner >> None)
-                                     ))
+                                     .where(~(Task.partner >> None)))
                     & (User.is_easy == (self.difficulty == 1))
                     & (User.id != self.assignee.id)
                     & (User.is_active == True)
                 )
                 .group_by(User.id))
 
-            # Difficulty 3 with the user from the same company
+            # Difficulty 3 always with the user from the same company
             if self.difficulty == 3:
-                query = query.order_by(fn.Count(Task.id), fn.Random())
-            else:
                 query = query.order_by((User.company == self.assignee.company).desc(), fn.Count(Task.id), fn.Random())
+            else:
+                query = query.order_by(fn.Count(Task.id), fn.Random())
 
             self.partner = query.get()
         except User.DoesNotExist:
@@ -194,8 +192,8 @@ class Task(Model):
                 condition = (Requirement.difficulty <= difficulty_left) \
                     & (Requirement.difficulty > difficulty_left / 3)
 
-                if found_basic | self.partner.is_easy:
-                    condition &= Requirement.is_basic == False
+                if found_basic or self.difficulty == 1:
+                    condition &= (Requirement.is_basic != True)
 
                 if len(used_requirements) > 0:
                     condition &= ~(Requirement.id << used_requirements)
