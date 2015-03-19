@@ -26,6 +26,10 @@
               <input id="add_user_company" name="add_user_company" type="text">
               <label for="add_user_name">Компания</label>
             </div>
+            <div class="input-field col s6">
+              <input type="checkbox" id="add_user_is_easy" name="add_user_is_easy">
+              <label for="add_user_is_easy" class="black-text">Легко найти (организатор)</label>
+            </div>
             <div class="col s12 m6 l4">
               <button class="btn waves-effect waves-light" type="submit"><i class="mdi-social-person-add left"></i>
                 Добавить

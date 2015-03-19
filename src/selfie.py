@@ -132,8 +132,9 @@ def moderator_users():
 def do_add_user():
     user_name = request.forms.get('add_user_name')
     user_company = request.forms.get('add_user_company')
+    user_is_easy = bool(request.forms.get('add_user_is_easy'))
     if user_name:
-        user = User.add(user_name, user_company)
+        user = User.add(user_name, user_company, user_is_easy)
         redirect(
             '/moderator/users?created_name=%s&created_access_code=%s' %
             (user_name.decode('utf-8'), user.access_code)

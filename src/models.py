@@ -50,6 +50,7 @@ class User(Model):
     score = IntegerField(default=0)
     company = CharField(default='')
     is_active = BooleanField(default=False)
+    is_easy = BooleanField(default=False)
 
     @property
     def needs_more_selfie_tasks(self):
@@ -99,13 +100,14 @@ class User(Model):
 
 
     @staticmethod
-    def add(user_name, user_company):
+    def add(user_name, user_company, user_is_easy):
         try:
             user = User.get(User.name == user_name)
         except User.DoesNotExist:
             user = User(
                 name=user_name,
-                company=user_company
+                company=user_company,
+                is_easy = user_is_easy
             )
             user.generate_access_code()
             user.save()
@@ -155,7 +157,7 @@ class Task(Model):
 
     def find_partner(self):
         try:
-            self.partner = (User
+            query = (User
                 .select(User.id)
                 .join(Task, JOIN_LEFT_OUTER, Task.partner)
                 .where(
@@ -165,13 +167,19 @@ class Task(Model):
                                      .where(
                                         ~(Task.partner >> None)
                                      ))
+                    & (User.is_easy == (self.difficulty == 1))
                     & (User.id != self.assignee.id)
-                & (User.is_active == True)
+                    & (User.is_active == True)
                 )
-                .group_by(User.id)
-                .order_by(fn.Count(Task.id), fn.Random())
-                .get()
-            )
+                .group_by(User.id))
+
+            # Difficulty 3 with the user from the same company
+            if self.difficulty == 3:
+                query = query.order_by(fn.Count(Task.id), fn.Random())
+            else:
+                query = query.order_by((User.company == self.assignee.company).desc(), fn.Count(Task.id), fn.Random())
+
+            self.partner = query.get()
         except User.DoesNotExist:
             pass
 
@@ -186,11 +194,11 @@ class Task(Model):
                 condition = (Requirement.difficulty <= difficulty_left) \
                     & (Requirement.difficulty > difficulty_left / 3)
 
-                if found_basic:
-                    condition = condition & (Requirement.is_basic == False)
+                if found_basic | self.partner.is_easy:
+                    condition &= Requirement.is_basic == False
 
                 if len(used_requirements) > 0:
-                    condition = condition & ~(Requirement.id << used_requirements)
+                    condition &= ~(Requirement.id << used_requirements)
 
                 requirement = (Requirement
                     .select()
