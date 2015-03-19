@@ -1,6 +1,7 @@
 .user-nav
 {
-    background-image: url("/static/images/logo_selfiedump_header.png");
+    background-image: url("/static/images/header-logo.svg");
+    background-size: 173px 42px;
     background-repeat: no-repeat;
     background-position: right;
 }
