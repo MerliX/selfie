@@ -19,34 +19,3 @@ label input[type=file] {
     position: fixed;
     top: -1000px;
 }
-
-.card-content li {
-    list-style-type: square;
-    margin-left: 2em;
-}
-
-.collapsible-body .card {
-    margin: 10px;
-}
-
-.user-money-icon {
-    position: relative;
-    bottom: -2px;
-}
-
-.used-coupon {
-    text-decoration: line-through;
-}
-
-.user-score
-{
-    text-align: left;
-}
-
-.achievement-reward {
-    font-size: 2.1rem;
-    float: right;
-    position: relative;
-    right: 0;
-    top: -1rem;
-}
