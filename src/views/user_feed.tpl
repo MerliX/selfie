@@ -9,7 +9,7 @@
                 <div class="col s12 m9 l6">
 
                     % if not generated:
-                        <div class="card orange darken-1">
+                        <div class="card grey darken-4">
                             <div class="card-content grey darken-4 white-text">
                                 <p>Похоже, у нас кончились задания. Загляни сюда еще раз через десять минут.</p>
                             </div>
