@@ -127,6 +127,9 @@ class User(Model):
             ))
         )
 
+    def get_fullname(self):
+        return self.name + ' (' + self.company + ')' if self.company else self.name
+
     class Meta(object):
         database = db
 
@@ -150,9 +153,9 @@ class Task(Model):
         return '/selfies/%s.jpg' % self.id
 
     def get_participants_for_user(self, user):
-        result = u'Ты' if self.assignee == user else self.assignee.name
+        result = u'Ты' if self.assignee == user else self.partner.get_fullname()
         if (self.partner):
-            result = result + u' и ' + (u'Ты' if self.partner == user else self.partner.name)
+            result = result + u' и ' + (u'Ты' if self.partner == user else self.partner.get_fullname())
         return result
 
     def find_partner(self):
