@@ -38,6 +38,7 @@ body {
   -webkit-background-size: contain;
           background-size: contain;
   background-repeat: no-repeat;
+  background-color: black;
   -webkit-transform: translateZ(0);
           transform: translateZ(0);
   -webkit-transform-origin: center;
