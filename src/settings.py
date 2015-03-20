@@ -13,7 +13,7 @@ WORKERS = 9
 
 HOST = 'localhost'
 PORT = 8080
-DEBUG = True
+DEBUG = False
 
 SELFIE_REWARD = 10
 
