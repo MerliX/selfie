@@ -3,7 +3,6 @@
 import os
 import logging
 import random
-from uuid import uuid4
 from itertools import chain
 from peewee import SqliteDatabase, Model, TextField, IntegerField, BooleanField, CharField, fn, \
                    ForeignKeyField, DateTimeField, JOIN_LEFT_OUTER
