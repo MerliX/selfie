@@ -4,7 +4,7 @@
   <nav>
     <div class="container">
       <div class="nav-wrapper">
-        <a href="/" class="brand-logo">Себяшки</a>
+        <a href="/" class="brand-logo">Селфи КонфУР</a>
       </div>
     </div>
   </nav>
@@ -27,7 +27,7 @@
           <div class="row">
             <div class="input-field col s8 m6 l3">
               <input id="access_code" name="access_code" type="password">
-              <label for="access_code">Код доступа</label> 
+              <label for="access_code">Код доступа</label>
             </div>
             <div class="col s4">
               <button class="btn waves-effect waves-light" type="submit">Войти</button>

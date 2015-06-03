@@ -1,7 +1,7 @@
 <html>
   <head>
     <link type="text/css" rel="stylesheet" href="/static/css/jquery.kenburnsy.css" media="screen,projection">
-    <title>Селфи ЗМШ 2015</title>
+    <title>Селфи КонфУР</title>
   </head>
 
   <body>
