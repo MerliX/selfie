@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from PIL import Image
 from bottle import get, post, run, view, response, redirect, request, hook
-from models import User, Task, Requirement, Coupon, StoreItem, BoughtStoreItem, db
+from models import User, Task, Requirement, db
 from settings import HOST, PORT, DEBUG
 
 MODERATOR_ACCESS_CODE = os.environ['SELFIE_MODERATOR_CODE']
@@ -25,12 +25,12 @@ def _close_db():
 @get('/')
 def main():
     access_code = request.get_cookie('access_code')
-    
+
     if access_code is None:
         return login()
     if access_code == MODERATOR_ACCESS_CODE:
         redirect('/moderator/feed')
-    
+
     try:
         User.get(User.access_code == access_code)
     except User.DoesNotExist:
@@ -89,8 +89,7 @@ def do_approve_task():
                     .execute()
                 )
         elif request.forms.get('decision') == 'reject':
-            if task.is_photo_required:
-                task.delete_photo()
+            task.delete_photo()
             task.is_complete = False
             task.is_rejected = True
             task.save()
@@ -128,7 +127,7 @@ def do_add_user():
             )
             task.save()
         redirect(
-            '/moderator/users?created_name=%s&created_access_code=%s' % 
+            '/moderator/users?created_name=%s&created_access_code=%s' %
             (user_name.decode('utf-8'), user.access_code)
         )
     else:
@@ -157,12 +156,12 @@ def do_add_requirement():
     requirement_is_basic = bool(request.forms.get('add_requirement_is_basic'))
     if requirement_description and requirement_difficulty:
         Requirement(
-            description=requirement_description, 
+            description=requirement_description,
             difficulty=requirement_difficulty,
             is_basic=requirement_is_basic
         ).save()
         redirect('/moderator/requirements?created_requirement=%s&created_difficulty=%s&created_is_basic=%s' % (
-            requirement_description.decode('utf-8'), 
+            requirement_description.decode('utf-8'),
             requirement_difficulty,
             requirement_is_basic
         ))
@@ -200,8 +199,7 @@ def moderator_tasks():
         'selfies': Task
                    .select()
                    .where(
-                        (Task.is_approved == False) 
-                        & (Task.is_selfie_game == True)
+                        (Task.is_approved == False)
                         & (Task.difficulty > 0)
                     )
                    .order_by(Task.is_complete, Task.difficulty.desc())
@@ -215,7 +213,6 @@ def do_regenerate_selfie():
         selfie = Task.get(
             Task.id == request.forms.get('selfie_id'),
             Task.is_approved == False,
-            Task.is_selfie_game == True,
             Task.difficulty > 0
         )
     except Task.DoesNotExist:
@@ -231,133 +228,6 @@ def do_regenerate_selfie():
                     selfie.delete_photo()
                 selfie.save()
     redirect('/moderator/tasks')
-
-
-@get('/moderator/coupons')
-@view('moderator_coupons')
-@check_moderator
-def moderator_coupons():
-    coupons = {}
-    for coupon in Coupon.select().order_by(Coupon.activated_by):
-        if coupon.kind not in coupons:
-            coupons[coupon.kind] = {
-                'description': coupon.description,
-                'reward': coupon.reward,
-                'limit': coupon.limit,
-                'codes': [(coupon.code, coupon.activated_by is None)]
-            }
-        else:
-            coupons[coupon.kind]['codes'].append((coupon.code, coupon.activated_by is None))
-    return {
-        'created_coupon': request.query.created_coupon,
-        'created_reward': request.query.created_reward,
-        'created_limit': request.query.created_limit,
-        'created_count': request.query.created_count,
-        'coupons': coupons
-    }
-
-
-@post('/moderator/add_coupon')
-@check_moderator
-def do_add_coupon():
-    coupon_description = request.forms.get('add_coupon_description')
-    coupon_reward = request.forms.get('add_coupon_reward')
-    coupon_limit = request.forms.get('add_coupon_limit')
-    coupon_count = int(request.forms.get('add_coupon_count'))
-    if coupon_description and coupon_reward and coupon_limit and coupon_count:
-        kind = Coupon.generate_kind()
-        for i in xrange(coupon_count):
-            coupon = Coupon(
-                description=coupon_description, 
-                reward=coupon_reward,
-                limit=coupon_limit,
-                kind=kind
-            )
-            coupon.generate_code()
-            coupon.save()
-        redirect('/moderator/coupons?created_coupon=%s&created_reward=%s&created_limit=%s&created_count=%s' % (
-            coupon_description.decode('utf-8'), 
-            coupon_reward,
-            coupon_limit,
-            coupon_count
-        ))
-    else:
-        redirect('/moderator/coupons')
-
-
-@post('/moderator/delete_coupon')
-@check_moderator
-def do_delete_coupon():
-    Coupon.delete().where(
-        (Coupon.kind == request.forms.get('coupon_kind'))
-        & (Coupon.activated_by >> None)
-    ).execute()
-    redirect('/moderator/coupons')
-
-
-@get('/moderator/store')
-@view('moderator_store')
-@check_moderator
-def moderator_store():
-    return {
-        'created_item': request.query.created_item,
-        'created_price': request.query.created_price,
-        'items': StoreItem
-                 .select()
-                 .order_by(StoreItem.price)
-    }
-
-
-@post('/moderator/add_store_item')
-@check_moderator
-def do_add_store_item():
-    store_item_description = request.forms.get('add_store_item_description')
-    store_item_price = request.forms.get('add_store_item_price')
-    if store_item_description and store_item_price:
-        StoreItem(
-            description=store_item_description, 
-            price=store_item_price
-        ).save()
-        redirect('/moderator/store?created_item=%s&created_price=%s' % (
-            store_item_description.decode('utf-8'), 
-            store_item_price
-        ))
-    else:
-        redirect('/moderator/store')
-
-
-@post('/moderator/delete_store_item')
-@check_moderator
-def do_delete_store_item():
-    try:
-        item = StoreItem.get(StoreItem.id == request.forms.get('store_item_id'))
-    except StoreItem.DoesNotExist:
-        pass
-    else:
-        for user in item.bought_users:
-            User.update(score=User.score + item.price).where(User.id == user.user).execute()
-        item.delete_instance()
-    redirect('/moderator/store')
-
-
-@get('/moderator/bought')
-@view('moderator_bought')
-@check_moderator
-def moderator_bought():
-    return {
-        'items': BoughtStoreItem.select().where(BoughtStoreItem.is_delivered == False)
-    }
-
-
-@post('/moderator/deliver_item')
-@check_moderator
-def do_deliver_item():
-    (BoughtStoreItem
-        .update(is_delivered=True)
-        .where(BoughtStoreItem.id == request.forms.get('item_id'))
-        .execute()
-    )
-    redirect('/moderator/bought')
 
 
 # user actions
@@ -379,10 +249,7 @@ def user_allfeeds():
     return {
         'tasks': Task
                  .select()
-                 .where(
-                     (Task.is_selfie_game == True)
-                     & (Task.is_approved == True)
-                 )
+                 .where(Task.is_approved == True)
                  .order_by(Task.difficulty)
     }
 
@@ -420,7 +287,6 @@ def do_upload_photo(user):
     try:
         task = Task.get(
             Task.id == request.forms.get('task_id'),
-            Task.is_photo_required == True, 
             Task.is_complete == False
         )
         if task.assignee == user:
@@ -445,66 +311,6 @@ def do_upload_photo(user):
     except Task.DoesNotExist:
         pass
     redirect('/')
-
-
-@get('/user/achievements')
-@view('user_achievements')
-@get_user
-def user_achievements(user):
-    return {
-        'user': user,
-        'achievements': user.coupons.order_by(Coupon.activated_time.desc()),
-        'reject_coupon': request.query.reject_coupon,
-        'activate_coupon': request.query.activate_coupon
-    }
-
-
-@post('/user/activate_coupon')
-@get_user
-def do_activate_coupon(user):
-    try:
-        coupon = Coupon.get(
-            Coupon.code == request.forms.get('coupon_code').lower(),
-            Coupon.activated_by >> None
-        )
-        activated_count = user.coupons.where(Coupon.kind == coupon.kind).count()
-        if coupon.limit > activated_count:
-            coupon.activated_by = user
-            coupon.activated_time = datetime.utcnow()
-            coupon.save()
-            User.update(score=User.score + coupon.reward).where(User.id == user).execute()
-            redirect('/user/achievements?activate_coupon=%s' % coupon.code)
-        else:
-            redirect('/user/achievements?reject_coupon=limit')
-    except Coupon.DoesNotExist:
-        redirect('/user/achievements?reject_coupon=doesnotexist')
-
-
-@get('/user/store')
-@view('user_store')
-@get_user
-def user_store(user):
-    return {
-        'user': user,
-        'items': StoreItem.select().order_by(StoreItem.price)
-    }
-
-
-@post('/user/buy_store_item')
-@get_user
-def do_buy_store_item(user):
-    try:
-        item = StoreItem.get(StoreItem.id == request.forms.get('store_item_id'))
-    except StoreItem.DoesNotExist:
-        pass
-    else:
-        if not user.has_active_store_item(item) and user.score >= item.price:
-            BoughtStoreItem.create(
-                user=user,
-                item=item
-            )
-            User.update(score=User.score - item.price).where(User.id == user).execute()
-    redirect('/user/store')
 
 
 # login actions
@@ -536,11 +342,8 @@ def slideshow():
     return {
         'tasks': Task
                  .select()
-                 .where(
-                    (Task.is_approved == True) 
-                    & (Task.is_selfie_game == True)
-                 )
+                 .where(Task.is_approved == True)
     }
-    
+
 
 run(host=HOST, port=PORT, debug=DEBUG, reloader=DEBUG)
