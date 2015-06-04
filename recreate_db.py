@@ -23,3 +23,12 @@ with open('fixtures/users.csv') as f:
             description=u'Сделай селфи, на котором хорошо видно лицо.',
             difficulty=0
         ).save()
+
+with open('fixtures/requirements.csv') as f:
+    for line in f:
+        reqdata = line.rstrip().split(';')
+        Requirement(
+            description=reqdata[0],
+            difficulty=int(reqdata[1]),
+            is_basic=reqdata[2] == '1'
+        ).save()
