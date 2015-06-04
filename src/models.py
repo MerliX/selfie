@@ -134,7 +134,7 @@ class Task(Model):
                         & ~(Requirement.id << exclude_requirements)
                         & ~(Requirement.id << used_requirements)
                     )
-                    .order_by(fn.Random())
+                    .order_by(Requirement.difficulty.desc(), fn.Random())
                     .get()
                 )
 
