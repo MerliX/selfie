@@ -103,6 +103,7 @@ class Task(Model):
                                      .where(~(Task.partner >> None))
                     )
                     & (User.id != self.assignee.id)
+                    & (User.score > 0)
                 )
                 .group_by(User.id)
                 .order_by(fn.Count(Task.id), fn.Random())
