@@ -17,8 +17,7 @@ label input[type=file] {
 }
 
 .user-money-icon {
-    position: relative;
-    bottom: -2px;
+    float: left;
 }
 
 .used-coupon {
