@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from peewee import IntegrityError
 from src.models import db, User, Requirement, Task
 
 try:
@@ -16,7 +17,11 @@ with open('fixtures/users.csv') as f:
         username = '%s %s' % (username[1], username[0])
 
         user = User(name=username, access_code=userdata[3])
-        user.save()
+        try:
+            user.save()
+        except IntegrityError:
+            user.name = '%s %s %s' % (username[1], username[2], username[0])
+            user.save()
 
         Task(
             assignee=user,
