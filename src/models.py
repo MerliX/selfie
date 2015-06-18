@@ -113,7 +113,7 @@ class Task(Model):
             pass
 
     def generate_description(self):
-        difficulty_left = self.difficulty
+        difficulty_left = (self.difficulty + 1) // 2
         basic_requirement = None
         used_requirements = []
         exclude_requirements = [
