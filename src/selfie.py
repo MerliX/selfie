@@ -349,6 +349,7 @@ def slideshow():
         'tasks': Task
                  .select()
                  .where(Task.is_approved == True)
+                 .limit(30)
     }
 
 
