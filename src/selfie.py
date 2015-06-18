@@ -281,6 +281,11 @@ def user_feed(user):
     }
 
 
+@get('/user/upload_photo')
+def user_upload_fix_405():
+    redirect('/')
+
+
 @post('/user/upload_photo')
 @get_user
 def do_upload_photo(user):
