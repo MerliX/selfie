@@ -15,3 +15,4 @@ for i in range(15):
         t.difficulty = i
         t.generate_description()
         print t.description
+        print
