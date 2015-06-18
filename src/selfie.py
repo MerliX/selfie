@@ -328,6 +328,12 @@ def do_login():
     redirect('/')
 
 
+@get('/code/<access_code:re:[a-z0-9]+>')
+def do_login_with_code(access_code):
+    response.set_cookie('access_code', access_code, max_age=14 * 24 * 3600)
+    redirect('/')
+
+
 @get('/logout')
 def do_logout():
     response.set_cookie('access_code', '')
