@@ -11,8 +11,6 @@ u = User()
 t.assignee = u
 
 for i in range(15):
-    for j in range(5):
-        t.difficulty = i
-        t.generate_description()
-        print t.description
-        print
+    t.difficulty = i+1
+    t.generate_description()
+    print '%d: %s\n' % (i+1, t.description)
