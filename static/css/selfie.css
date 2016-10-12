@@ -1,11 +1,3 @@
-.user-nav
-{
-    background-image: url("/static/images/header-logo.svg");
-    background-size: 173px 42px;
-    background-repeat: no-repeat;
-    background-position: right;
-}
-
 .no-margin {
     margin: 0;
 }
@@ -15,10 +7,10 @@ label input[type=file] {
     top: -1000px;
 }
 
-.jet-logo {
-	width: 106px;
-	height: 37px;
+.logo {
+	width: 100px;
+	height: 51px;
 	position: relative;
 	left: 50%;
-	margin-left: -53px;
+	margin-left: -50px;
 }

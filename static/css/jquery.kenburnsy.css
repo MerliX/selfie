@@ -5,10 +5,6 @@
  * @license MIT
  */
 
-body {
-  background-image: url("/static/images/background.gif");
-}
-
 .kenburnsy {
   position: relative;
   overflow: hidden;

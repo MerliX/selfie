@@ -75,7 +75,7 @@
                         % end
 
                         % if task.id == active_tasks[0].id:
-                            <img src="/static/images/jet-logo.svg" class="jet-logo">
+                            <img src="/static/images/logo.jpg" class="logo">
                         % end
                     % end
 
