@@ -11,3 +11,9 @@
 6. Создать таблицы в базе данных скриптом recreate_db.py. ОСТОРОЖНО: он удаляет существующие таблицы и создает новые пустые
 7. По умолчанию приложение не раздает статические файлы. Лучше делать это через nginx. Пример конфигурации лежит в файле `nginx.conf.example`
 8. Запустить python selfie.py. Демонизировать процесс можно с помощью supervisor, пример конфигурации лежит в файле `supervisor.ini.example`
+
+Run in Docker
+=============
+```
+docker run -d -e "http_host=localhost" -e "SELFIE_MODERATOR_CODE=123456" -v selfie4:/data -p 80:80 merlix/selfie:targem
+```
