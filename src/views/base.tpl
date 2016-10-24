@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="/static/css/materialize.min.css" media="screen,projection">
     <link type="text/css" rel="stylesheet" href="/static/css/selfie.css" media="screen,projection"/>
-    <title>#селфидамп</title>
+    <title>Селфи</title>
   </head>
 
   <body>
